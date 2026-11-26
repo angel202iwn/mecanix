@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mecanix Cloud | Iniciar Sesión</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+    <main class="login-wrapper">
+        <section class="brand-panel">
+            <div class="brand-header">
+                <div class="logo-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                    </svg>
+                </div>
+                <div>
+                    <span class="brand-name">Mecanix <span class="accent">Cloud</span></span>
+                    <span class="brand-tag">ERP AUTOMOTRIZ SAAS</span>
+                </div>
+            </div>
+
+            <div class="brand-content">
+                <span class="tech-pill">● Spring Boot + SQL Server · Multi-Dispositivo</span>
+                <h1>Control total de tu taller mecánico en tiempo real.</h1>
+                <p>
+                    Gestiona órdenes de trabajo, inventario de repuestos, cotizaciones digitales y seguimiento en vivo para tus clientes desde cualquier computadora, tablet o celular.
+                </p>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <strong>4 Roles</strong>
+                        <span>Control de acceso RBAC</span>
+                    </div>
+                    <div class="metric-card">
+                        <strong>JWT + BCrypt</strong>
+                        <span>Seguridad empresarial</span>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="brand-footer">
+                <span>Mecanix ERP · Ingeniería de Software</span>
+            </footer>
+        </section>
+
+        <section class="form-panel">
+            <div class="form-container">
+                <div class="mobile-logo">
+                    <span class="brand-name">Mecanix <span class="accent">Cloud</span></span>
+                </div>
+
+                <div class="form-header">
+                    <h2>Bienvenido de vuelta</h2>
+                    <p>Ingresa tus credenciales para acceder a tu espacio de trabajo</p>
+                </div>
+
+                <div id="alertBox" class="alert-box hidden" role="alert">
+                    <span id="alertMessage">Credenciales incorrectas.</span>
+                </div>
+
+                <form id="loginForm" novalidate>
+                    <div class="input-group">
+                        <label for="email">Correo electrónico</label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                placeholder="usuario@mecanix.com" 
+                                autocomplete="email"
+                                required
+                            >
+                        </div>
+                        <small class="field-error" id="emailError"></small>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="label-row">
+                            <label for="password">Contraseña</label>
+                            <a href="#" class="link-subtle" onclick="alert('Contacta al Administrador del taller para restablecer tu clave.'); return false;">¿Olvidaste tu contraseña?</a>
+                        </div>
+                        <div class="input-wrapper password-wrapper">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="••••••••" 
+                                autocomplete="current-password"
+                                required
+                            >
+                            <button type="button" id="togglePassword" class="btn-icon" aria-label="Mostrar contraseña">
+                                👁️
+                            </button>
+                        </div>
+                        <small class="field-error" id="passwordError"></small>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="rememberMe" checked>
+                            <span>Mantener sesión iniciada</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="btn-primary">
+                        <span id="btnText">Iniciar Sesión</span>
+                        <span id="btnSpinner" class="spinner hidden"></span>
+                    </button>
+                </form>
+
+                <div class="demo-access">
+                    <div class="divider"><span>Acceso rápido de prueba (Roles)</span></div>
+                    <div class="role-pills">
+                        <button type="button" class="role-btn" data-role="ADMIN">👑 Admin</button>
+                        <button type="button" class="role-btn" data-role="RECEPCIONISTA">📋 Recepción</button>
+                        <button type="button" class="role-btn" data-role="MECANICO">🔧 Mecánico</button>
+                        <button type="button" class="role-btn" data-role="CLIENTE">🚗 Cliente</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/auth.js"></script>
+</body>
+</html>

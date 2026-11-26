@@ -1,0 +1,2444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mecanix Cloud | ERP Automotriz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #080D16;
+            --bg-sidebar: #0C121E;
+            --bg-surface: #111827;
+            --bg-card: #161F30;
+            --border: #1E293B;
+            --border-light: #2D3B50;
+            --primary: #06B6D4;
+            --primary-hover: #0891B2;
+            --blue: #3B82F6;
+            --green: #10B981;
+            --amber: #F59E0B;
+            --red: #EF4444;
+            --purple: #8B5CF6;
+            --text: #F8FAFC;
+            --muted: #94A3B8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg-main); color: var(--text); display: flex; min-height: 100vh; }
+
+        .sidebar {
+            width: 265px; background: var(--bg-sidebar); border-right: 1px solid var(--border);
+            padding: 1.15rem 0.85rem; display: flex; flex-direction: column; justify-content: space-between;
+            flex-shrink: 0; overflow-y: auto; max-height: 100vh; position: sticky; top: 0;
+        }
+        .brand-box {
+            display: flex; align-items: center; gap: 10px; padding: 0.35rem 0.5rem 1rem;
+            border-bottom: 1px solid var(--border); margin-bottom: 0.6rem;
+        }
+        .brand-logo {
+            width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #06B6D4, #2563EB);
+            display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 1rem;
+        }
+        .brand-title { font-size: 0.95rem; font-weight: 700; }
+        .brand-sub { font-size: 0.66rem; color: var(--muted); letter-spacing: 0.08em; }
+        .workshop-pill {
+            background: var(--bg-surface); border: 1px solid var(--border); border-radius: 9px;
+            padding: 0.55rem 0.75rem; margin-bottom: 0.6rem;
+        }
+        .workshop-pill strong { display: block; font-size: 0.8rem; }
+        .workshop-pill span { font-size: 0.68rem; color: var(--primary); }
+
+        .nav-section-label {
+            font-size: 0.64rem; font-weight: 700; color: #64748B; letter-spacing: 0.09em;
+            padding: 0.65rem 0.75rem 0.25rem; text-transform: uppercase;
+        }
+        .nav-list { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+        .nav-item {
+            padding: 0.5rem 0.75rem; border-radius: 8px; color: var(--muted); font-size: 0.82rem;
+            cursor: pointer; transition: 0.15s; display: flex; align-items: center; gap: 9px;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+        .nav-item.active {
+            background: rgba(6,182,212,0.14); color: var(--primary); font-weight: 600;
+            border-left: 3px solid var(--primary);
+        }
+        .logout-btn {
+            margin-top: 1rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);
+            color: #FCA5A5; padding: 0.58rem; border-radius: 8px; cursor: pointer; font-weight: 600;
+            font-size: 0.82rem; width: 100%;
+        }
+        .logout-btn:hover { background: var(--red); color: #fff; }
+
+        .workspace { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .topbar {
+            height: 60px; background: var(--bg-sidebar); border-bottom: 1px solid var(--border);
+            padding: 0 1.75rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+            position: sticky; top: 0; z-index: 20;
+        }
+        .search-bar { flex: 1; max-width: 440px; min-width: 0; }
+        .search-bar input {
+            width: 100%; background: var(--bg-surface); border: 1px solid var(--border-light);
+            padding: 0.48rem 0.9rem; border-radius: 8px; color: var(--text); font-size: 0.83rem;
+        }
+        .topbar-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+        .role-chip {
+            background: rgba(6,182,212,0.14); color: var(--primary); border: 1px solid rgba(6,182,212,0.35);
+            padding: 4px 12px; border-radius: 999px; font-size: 0.73rem; font-weight: 700; white-space: nowrap;
+        }
+        .btn-primary {
+            background: var(--primary); color: #05202A; border: none; padding: 0.5rem 0.9rem;
+            border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; white-space: nowrap;
+        }
+        .btn-primary:hover { background: var(--primary-hover); color: #fff; }
+        .btn-success-sm {
+            background: rgba(16,185,129,0.16); border: 1px solid rgba(16,185,129,0.45); color: #34D399;
+            padding: 4px 9px; border-radius: 7px; font-size: 0.74rem; font-weight: 600; cursor: pointer; margin-right: 4px; white-space: nowrap;
+        }
+        .btn-success-sm:hover { background: var(--green); color: #05202A; }
+        .btn-ghost {
+            background: transparent; border: 1px solid var(--border-light); color: var(--muted);
+            padding: 0.46rem 0.8rem; border-radius: 8px; cursor: pointer; font-size: 0.8rem; white-space: nowrap;
+        }
+        .btn-ghost:hover { color: var(--text); border-color: var(--primary); }
+        .btn-sm {
+            background: var(--bg-card); border: 1px solid var(--border-light); color: var(--text);
+            padding: 4px 9px; border-radius: 7px; font-size: 0.74rem; cursor: pointer; margin-right: 4px; white-space: nowrap;
+        }
+        .btn-sm:hover { border-color: var(--primary); color: var(--primary); }
+        .btn-danger-sm {
+            background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.4); color: #FCA5A5;
+            padding: 4px 8px; border-radius: 6px; font-size: 0.72rem; cursor: pointer; white-space: nowrap;
+        }
+        .btn-danger-sm:hover { background: var(--red); color: #fff; }
+
+        .main-content { padding: 1.65rem 1.85rem; flex: 1; min-width: 0; }
+        .page-header { margin-bottom: 1.4rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; }
+        .page-header h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
+        .page-header p { color: var(--muted); font-size: 0.84rem; margin-top: 2px; }
+
+        .toast {
+            position: fixed; bottom: 22px; right: 22px; z-index: 99;
+            background: #1E293B; border: 1px solid var(--primary); color: var(--text);
+            padding: 0.8rem 1.2rem; border-radius: 10px; font-size: 0.85rem; max-width: 440px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.45); display: none;
+        }
+        .toast.show { display: block; }
+        .toast.error { border-color: var(--red); color: #FCA5A5; }
+
+        .kpi-grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin-bottom: 1.15rem; }
+        .kpi-card {
+            background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px;
+            padding: 1.1rem 1.25rem; position: relative;
+        }
+        .kpi-card::before {
+            content: ''; position: absolute; left: 0; top: 14px; bottom: 14px; width: 3.5px; border-radius: 0 4px 4px 0;
+        }
+        .accent-cyan::before { background: var(--primary); }
+        .accent-green::before { background: var(--green); }
+        .accent-amber::before { background: var(--amber); }
+        .accent-purple::before { background: var(--purple); }
+        .accent-red::before { background: var(--red); }
+
+        .kpi-top { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.79rem; margin-bottom: 0.4rem; }
+        .kpi-val { font-size: 1.6rem; font-weight: 700; }
+        .kpi-foot { font-size: 0.72rem; color: var(--muted); margin-top: 0.25rem; }
+
+        .dashboard-split { display: grid; grid-template-columns: 2.15fr 1fr; gap: 1.2rem; margin-top: 1.2rem; }
+        .bottom-split { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-top: 1.2rem; }
+        .panel { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem; margin-bottom: 1.2rem; min-width: 0; }
+        .panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 8px; }
+        .panel-head h3 { font-size: 0.98rem; font-weight: 600; }
+
+        .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+        .quick-btn {
+            background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 10px;
+            padding: 0.9rem 0.8rem; text-align: left; color: var(--text); cursor: pointer; transition: 0.15s;
+        }
+        .quick-btn:hover { border-color: var(--primary); transform: translateY(-1px); }
+        .quick-btn.featured { background: rgba(6,182,212,0.16); border-color: rgba(6,182,212,0.45); }
+        .quick-icon { display: block; font-size: 1.1rem; }
+        .quick-btn strong { display: block; font-size: 0.83rem; margin-top: 5px; }
+        .quick-sub { font-size: 0.71rem; color: var(--muted); display: block; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+        th { text-align: left; color: #64748B; font-size: 0.72rem; text-transform: uppercase; padding: 0.72rem; border-bottom: 1px solid var(--border); }
+        td { padding: 0.8rem 0.72rem; border-bottom: 1px solid rgba(30,41,59,0.75); vertical-align: middle; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+
+        .pill { padding: 3px 9px; border-radius: 999px; font-size: 0.71rem; font-weight: 600; display: inline-block; white-space: nowrap; }
+        .st-PENDIENTE, .st-PENDIENTE_PAGO { background: rgba(245,158,11,0.15); color: #FBBF24; }
+        .st-CONFIRMADA { background: rgba(6,182,212,0.15); color: #22D3EE; }
+        .st-ATENDIDA, .st-PAGADO { background: rgba(16,185,129,0.15); color: #34D399; }
+        .st-CANCELADA { background: rgba(239,68,68,0.15); color: #FCA5A5; }
+        .st-EN_DIAGNOSTICO { background: rgba(59,130,246,0.15); color: #60A5FA; }
+        .st-EN_REPARACION { background: rgba(6,182,212,0.15); color: #22D3EE; }
+        .st-LISTO { background: rgba(16,185,129,0.15); color: #34D399; }
+        .st-BLOQUEADO { background: rgba(239,68,68,0.15); color: #FCA5A5; }
+
+        select.status-select {
+            background: var(--bg-card); color: var(--text); border: 1px solid var(--border-light);
+            padding: 4px 8px; border-radius: 7px; font-size: 0.78rem;
+        }
+
+        .filter-bar {
+            display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;
+            background: var(--bg-main); padding: 0.85rem; border: 1px solid var(--border);
+            border-radius: 10px; margin-bottom: 1rem;
+        }
+
+        .modal-backdrop {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.82); display: none;
+            place-items: center; padding: 1rem; z-index: 50; overflow-y: auto;
+        }
+        .modal-backdrop.open { display: grid; }
+        .modal {
+            background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 14px;
+            width: 100%; max-width: 620px; max-height: 92vh; overflow-y: auto; padding: 1.5rem;
+        }
+        .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; margin-top: 1rem; }
+        .form-grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.55rem; }
+        .form-full { grid-column: 1 / -1; }
+        .field { min-width: 0; }
+        .field label { display: block; font-size: 0.76rem; color: var(--muted); margin-bottom: 4px; }
+        .field input, .field textarea, .field select {
+            width: 100%; max-width: 100%; min-width: 0; padding: 0.56rem 0.78rem;
+            background: var(--bg-main); border: 1px solid var(--border-light);
+            border-radius: 8px; color: var(--text); font-size: 0.84rem;
+        }
+        .item-form-grid {
+            display: grid; grid-template-columns: minmax(0, 1fr) 88px auto; gap: 8px; align-items: center;
+        }
+        .item-form-grid.serv-grid {
+            grid-template-columns: minmax(0, 1fr) 78px 98px auto;
+        }
+        .item-form-grid > * { min-width: 0; max-width: 100%; }
+
+        .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.25rem; flex-wrap: wrap; }
+        .receipt-box { background: var(--bg-main); border: 1px solid var(--border); border-radius: 10px; padding: 0.9rem; margin-top: 0.9rem; min-width: 0; }
+        .tabs-mini { display: flex; gap: 6px; margin-bottom: 0.75rem; flex-wrap: wrap; }
+        .tab-btn {
+            background: var(--bg-surface); border: 1px solid var(--border-light); color: var(--muted);
+            padding: 5px 11px; border-radius: 7px; font-size: 0.76rem; cursor: pointer;
+        }
+        .tab-btn.active { background: rgba(6,182,212,0.18); border-color: var(--primary); color: var(--primary); font-weight: 600; }
+        .hidden { display: none !important; }
+
+        @media print {
+            body { background: #fff !important; color: #000 !important; }
+            .sidebar, .topbar, .btn-primary, .btn-ghost, .btn-sm, .btn-success-sm, .btn-danger-sm,
+            #boxAsignarRep, .modal-actions, .filter-bar, .toast, .no-print { display: none !important; }
+            body.printing-modal .workspace { display: none !important; }
+            body.printing-modal .modal-backdrop.open { position: static; background: #fff !important; display: block !important; padding: 0; }
+            .workspace, .main-content, .panel, .modal, .receipt-box {
+                background: #fff !important; color: #000 !important; border: 1px solid #ccc !important; max-width: 100% !important; max-height: none !important;
+            }
+            th, td, strong, span, p, h1, h3 { color: #000 !important; }
+        }
+
+        @media (max-width: 1024px) { .dashboard-split, .bottom-split { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; position: static; max-height: none; }
+            .form-grid, .form-grid-4, .item-form-grid, .item-form-grid.serv-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div id="toast" class="toast"></div>
+
+    <aside class="sidebar">
+        <div>
+            <div class="brand-box">
+                <div class="brand-logo">M</div>
+                <div>
+                    <div class="brand-title">MECANIX <span style="color:var(--primary)">CLOUD</span></div>
+                    <div class="brand-sub">CONTROL AUTOMOTRIZ</div>
+                </div>
+            </div>
+            <div class="workshop-pill">
+                <strong id="sidebarUserName">Usuario</strong>
+                <span id="sidebarRoleLabel">● Sede Central Ica</span>
+            </div>
+            <div id="sidebarContainer"></div>
+        </div>
+        <button class="logout-btn" id="logoutBtn">Cerrar Sesión</button>
+    </aside>
+
+    <div class="workspace">
+        <header class="topbar">
+            <div class="search-bar">
+                <input type="text" id="globalSearch" placeholder="🔍 Buscar cliente, placa (ABC-123) u orden (OT-2026)...">
+            </div>
+            <div class="topbar-right">
+                <span class="role-chip" id="roleBadge">ROL</span>
+                <button class="btn-ghost" onclick="abrirModal('modalMiClave')">🔐 Mi Clave</button>
+                <button class="btn-primary hidden" id="btnTopNuevaOrden">+ Nueva Orden / Cotización</button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="page-header">
+                <div>
+                    <h1 id="pageTitle">Dashboard Ejecutivo</h1>
+                    <p id="pageSubtitle">Ciclo de negocio: Cita → Orden de Trabajo → Piezas/Servicio → Comprobante y Pago</p>
+                </div>
+                <div style="display:flex; gap:8px;">
+                    <button class="btn-ghost" onclick="imprimirPagina()">🖨️ Imprimir / PDF</button>
+                </div>
+            </div>
+
+            <!-- 1. DASHBOARD PRINCIPAL -->
+            <section id="viewInicio">
+                <div class="kpi-grid-4" id="kpiOperativos"></div>
+                <div class="kpi-grid-4" id="kpiFinancieros"></div>
+
+                <div class="dashboard-split">
+                    <div class="panel">
+                        <div class="panel-head">
+                            <h3>Órdenes Recientes (Prioridad Operativa)</h3>
+                            <button class="btn-sm" onclick="irAVista('viewOrdenes')">Ver todas →</button>
+                        </div>
+                        <div style="overflow-x:auto;">
+                            <table>
+                                <thead><tr><th>Orden</th><th>Placa</th><th>Cliente</th><th>Vehículo</th><th>Estado</th><th>Pago</th><th>Total</th></tr></thead>
+                                <tbody id="tablaRecientesBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-head"><h3>Acciones Rápidas</h3></div>
+                        <div class="quick-grid" id="quickActionsGrid"></div>
+                    </div>
+                </div>
+
+                <div class="bottom-split" id="widgetsInferiores">
+                    <div class="panel">
+                        <div class="panel-head">
+                            <h3>🔔 Recordatorios de Cobro</h3>
+                            <button class="btn-sm" onclick="irAVista('viewFinanzas')">Ver todos</button>
+                        </div>
+                        <div id="widgetCobros" style="font-size:0.84rem; color:var(--muted);"></div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-head">
+                            <h3>⚠️ Alertas de Inventario</h3>
+                            <button class="btn-sm" onclick="irAVista('viewRepuestos')">Revisar</button>
+                        </div>
+                        <div id="widgetAlertas" style="font-size:0.84rem; color:var(--muted);"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. CITAS -->
+            <section id="viewCitas" class="panel hidden">
+                <div class="panel-head">
+                    <div>
+                        <h3>📅 Agenda y Recepción de Citas del Taller</h3>
+                        <p class="no-print" style="color:var(--muted); font-size:0.78rem; margin-top:2px;">Al pasar una cita a ATENDIDA se genera su orden de trabajo (en bolsa general o asignada a un mecánico).</p>
+                    </div>
+                    <button class="btn-primary hidden" id="btnAgendarCita" onclick="abrirModalCita()">+ Agendar Cita</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>Fecha / Hora Cita</th><th>Cliente</th><th>Placa</th><th>Motivo</th><th>Estado</th><th id="thAccionCita" class="no-print">Acciones</th></tr></thead>
+                        <tbody id="tablaCitasBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 3. ÓRDENES DE TRABAJO -->
+            <section id="viewOrdenes" class="panel hidden">
+                <div class="panel-head">
+                    <div>
+                        <h3 id="tituloOrdenes">📋 Órdenes de Trabajo Activas e Históricas</h3>
+                        <p id="subtituloOrdenes" class="no-print" style="color:var(--muted); font-size:0.78rem; margin-top:2px;">Gestiona piezas/servicio, asigna o toma órdenes, edita info adicional y confirma el pago.</p>
+                    </div>
+                    <div class="no-print" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                        <select id="filtroAlcanceOrdenes" class="status-select hidden" onchange="aplicarFiltroOrdenes()">
+                            <option value="MIAS">Mis órdenes (asignadas a mí)</option>
+                            <option value="LIBRES">Bolsa general (sin asignar)</option>
+                            <option value="TODAS">Todas las órdenes del taller</option>
+                        </select>
+                        <button class="btn-ghost" onclick="imprimirPagina()">🖨️ Imprimir / PDF</button>
+                    </div>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>Código OT</th><th>Ingreso</th><th>Placa / Vehículo</th><th>Cliente</th><th>Falla / Info Adic.</th><th>Mecánico</th><th>Monto Base</th><th>Estado</th><th>Pago</th><th class="no-print">Acciones</th></tr></thead>
+                        <tbody id="tablaOrdenesFullBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 4. COTIZACIONES -->
+            <section id="viewCotizaciones" class="panel hidden">
+                <div class="panel-head">
+                    <h3>🧾 Cotizaciones y Presupuestos</h3>
+                    <button class="btn-primary" onclick="abrirModalNuevaOrden('COTIZACION')">+ Nueva Cotización</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>Código</th><th>Fecha</th><th>Cliente</th><th>Vehículo</th><th>Detalle / Info Adic.</th><th>Total (+IGV)</th><th class="no-print">Acción</th></tr></thead>
+                        <tbody id="tablaCotizacionesBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 5. CLIENTES Y VEHÍCULOS -->
+            <section id="viewClientes" class="panel hidden">
+                <div class="panel-head"><h3>👥 Directorio de Clientes y Flota Vehicular</h3></div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>DNI / RUC</th><th>Cliente</th><th>Teléfono</th><th>Correo</th><th>Vehículo / Placa</th></tr></thead>
+                        <tbody id="tablaClientesBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 6. GUÍA / TARIFARIO DE SERVICIOS -->
+            <section id="viewServicios" class="panel hidden">
+                <div class="panel-head">
+                    <div>
+                        <h3>🔧 Guía y Tarifario de Servicios Mecánicos</h3>
+                        <p class="no-print" style="color:var(--muted); font-size:0.78rem; margin-top:2px;">CRUD de servicios predeterminados con horas estimadas y tarifa base.</p>
+                    </div>
+                    <button class="btn-primary" onclick="abrirModalServicio()">+ Añadir Servicio</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>Código</th><th>Servicio Técnico</th><th>Categoría</th><th>Tiempo Est.</th><th>Tarifa Base</th><th class="no-print">Acciones</th></tr></thead>
+                        <tbody id="tablaServiciosBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 7. ALMACÉN / REPUESTOS + AJUSTE MANUAL -->
+            <section id="viewRepuestos" class="panel hidden">
+                <div class="panel-head">
+                    <div>
+                        <h3>🔩 Almacén e Inventario de Repuestos (SQL Server)</h3>
+                        <p class="no-print" style="color:var(--muted); font-size:0.78rem; margin-top:2px;">Control de existencias, reposición rápida y ajuste manual ante errores de uso.</p>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn-primary hidden" id="btnAbrirModalRep">+ Nuevo Repuesto</button>
+                        <button class="btn-ghost" onclick="irAVista('viewKardex')">📦 Ver Registro de Usos</button>
+                    </div>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>SKU</th><th>Descripción</th><th>Precio Unit.</th><th>Stock Actual</th><th>Estado</th><th class="no-print">Control y Ajustes</th></tr></thead>
+                        <tbody id="tablaRepuestosBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 8. KARDEX / REGISTRO DE USOS DE INVENTARIO -->
+            <section id="viewKardex" class="panel hidden">
+                <div class="panel-head">
+                    <div>
+                        <h3>📦 Registro de Usos y Movimientos de Inventario (Kardex)</h3>
+                        <p class="no-print" style="color:var(--muted); font-size:0.78rem; margin-top:2px;">Trazabilidad completa de piezas usadas en órdenes, devoluciones y ajustes manuales.</p>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn-ghost" onclick="imprimirPagina()">🖨️ Imprimir / PDF</button>
+                    </div>
+                </div>
+
+                <div class="filter-bar">
+                    <div class="field">
+                        <label>Filtrar por Repuesto</label>
+                        <select id="kardexFiltroRep" onchange="cargarKardex()">
+                            <option value="">Todos los repuestos</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Tipo de Movimiento</label>
+                        <select id="kardexFiltroTipo" onchange="cargarKardex()">
+                            <option value="TODOS">Todos los tipos</option>
+                            <option value="USO_ORDEN">USO EN ORDEN (Salida)</option>
+                            <option value="DEVOLUCION_ORDEN">DEVOLUCIÓN DE ORDEN</option>
+                            <option value="AJUSTE_MANUAL">AJUSTE MANUAL</option>
+                            <option value="INGRESO_STOCK">INGRESO / REPOSICIÓN</option>
+                        </select>
+                    </div>
+                    <button class="btn-ghost" onclick="cargarKardex()">↻ Refrescar</button>
+                </div>
+
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr><th>ID</th><th>Repuesto</th><th>Tipo</th><th>Variación</th><th>Stock Ant → Nuevo</th><th>Orden</th><th>Motivo</th><th>Responsable</th><th>Fecha / Hora</th></tr>
+                        </thead>
+                        <tbody id="tablaKardexBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 9. RÉCORD DOCUMENTAL -->
+            <section id="viewDocumentos" class="panel hidden">
+                <div class="panel-head">
+                    <h3>📄 Récord Histórico de Documentos Emitidos</h3>
+                    <button class="btn-ghost" onclick="imprimirPagina()">🖨️ Imprimir / PDF</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>N° Documento</th><th>Tipo</th><th>Cliente</th><th>Placa</th><th>Monto (+IGV)</th><th>Emitido Por</th><th>Fecha / Hora Emisión</th></tr></thead>
+                        <tbody id="tablaDocumentosBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 10. FINANZAS Y CONFIRMACIÓN DE PAGO -->
+            <section id="viewFinanzas" class="panel hidden">
+                <div class="panel-head">
+                    <div>
+                        <h3>💰 Caja, Facturación y Confirmación de Pagos</h3>
+                        <p class="no-print" style="color:var(--muted); font-size:0.78rem; margin-top:2px;">Confirma los pagos recibidos por orden para cerrar el ciclo financiero.</p>
+                    </div>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>Orden</th><th>Fecha</th><th>Cliente</th><th>Placa</th><th>Estado Trabajo</th><th>Total (+IGV)</th><th>Pago</th><th class="no-print">Confirmar</th></tr></thead>
+                        <tbody id="tablaFinanzasBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 11. MIEMBROS Y CLAVES -->
+            <section id="viewUsuarios" class="panel hidden">
+                <div class="panel-head">
+                    <h3>🔑 Control de Usuarios, Roles y Recuperación de Contraseñas</h3>
+                    <button class="btn-primary" onclick="abrirModal('modalUsuario')">+ Nuevo Miembro</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>ID</th><th>Nombre</th><th>Correo Login</th><th>Rol</th><th>Estado</th><th class="no-print">Acciones Seguridad</th></tr></thead>
+                        <tbody id="tablaUsuariosBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 12. AUDITORÍA CON INTERVALOS -->
+            <section id="viewAuditoria" class="panel hidden">
+                <div class="panel-head">
+                    <div>
+                        <h3>🕵️ Bitácora de Auditoría y Supervisión</h3>
+                        <p class="no-print" style="color:var(--muted); font-size:0.78rem; margin-top:2px;">Filtra por intervalo de fechas y módulo o imprime el reporte.</p>
+                    </div>
+                    <div class="no-print" style="display:flex; gap:6px; flex-wrap:wrap;">
+                        <button class="btn-sm" onclick="aplicarIntervaloAuditoria('HOY')">Hoy</button>
+                        <button class="btn-sm" onclick="aplicarIntervaloAuditoria('7D')">Últimos 7 días</button>
+                        <button class="btn-sm" onclick="aplicarIntervaloAuditoria('30D')">Últimos 30 días</button>
+                        <button class="btn-sm" onclick="aplicarIntervaloAuditoria('TODO')">Todo</button>
+                    </div>
+                </div>
+
+                <div class="filter-bar">
+                    <div class="field"><label>Desde</label><input type="date" id="audDesde"></div>
+                    <div class="field"><label>Hasta</label><input type="date" id="audHasta"></div>
+                    <div class="field">
+                        <label>Módulo</label>
+                        <select id="audModulo">
+                            <option value="TODOS">Todos los módulos</option>
+                            <option value="SEGURIDAD">SEGURIDAD</option>
+                            <option value="ORDENES">ORDENES</option>
+                            <option value="ALMACEN">ALMACEN</option>
+                            <option value="DOCUMENTOS">DOCUMENTOS</option>
+                            <option value="AUDITORIA">AUDITORIA</option>
+                        </select>
+                    </div>
+                    <button class="btn-primary" onclick="cargarAuditoriaFiltrada()">🔍 Filtrar</button>
+                    <button class="btn-ghost" onclick="imprimirPagina()">🖨️ Imprimir / PDF</button>
+                </div>
+
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>ID</th><th>Módulo</th><th>Acción Registrada</th><th>Responsable</th><th>Fecha y Hora</th></tr></thead>
+                        <tbody id="tablaAuditoriaBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 13. CONFIGURACIÓN -->
+            <section id="viewConfig" class="panel hidden">
+                <div class="panel-head"><h3>⚙️ Configuración General del Taller (Mecanix ERP)</h3></div>
+                <div class="form-grid" style="max-width:650px;">
+                    <div class="field"><label>Razón Social del Taller</label><input type="text" value="Mecanix Automotriz S.A.C."></div>
+                    <div class="field"><label>RUC Empresa</label><input type="text" value="20608491025"></div>
+                    <div class="field"><label>Sede Principal</label><input type="text" value="Av. Los Maestros 450, Ica - Perú"></div>
+                    <div class="field"><label>PIN Maestro Recuperación</label><input type="text" value="MECANIX-2026" readonly></div>
+                    <div class="field form-full"><button class="btn-primary" onclick="notificar('Parámetros del taller guardados.')">Guardar Configuración</button></div>
+                </div>
+            </section>
+
+            <!-- 14. HISTORIAL DE TRABAJOS Y GANANCIAS POR MECÁNICO -->
+            <section id="viewHistorialMecanicos" class="panel hidden">
+                <div class="panel-head">
+                    <div>
+                        <h3 id="tituloHistorialMec">🏅 Historial de Trabajos y Ganancias</h3>
+                        <p id="subtituloHistorialMec" class="no-print" style="color:var(--muted); font-size:0.78rem; margin-top:2px;">Consulta la cantidad de trabajos realizados y la ganancia por actividad.</p>
+                    </div>
+                    <button class="btn-ghost" onclick="imprimirPagina()">🖨️ Imprimir / PDF</button>
+                </div>
+
+                <div id="bloqueMecPropio" class="hidden">
+                    <div class="kpi-grid-4" id="kpisMecPropio"></div>
+                    <div class="panel" style="margin-top:0.8rem; margin-bottom:0;">
+                        <div class="panel-head"><h3>Trabajos Realizados (Detalle Propio)</h3></div>
+                        <div style="overflow-x:auto;">
+                            <table>
+                                <thead>
+                                    <tr><th>Orden</th><th>Fecha</th><th>Placa / Vehículo</th><th>Actividad / Falla</th><th>Monto Servicio</th><th>Ganancia Actividad</th></tr>
+                                </thead>
+                                <tbody id="tablaMecPropioBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="bloqueMecGeneral" class="hidden">
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead>
+                                <tr><th>Mecánico</th><th>Correo</th><th>Trabajos Realizados</th><th>En Proceso</th><th>Monto Generado</th><th>Ganancia por Actividad</th><th class="no-print">Detalle</th></tr>
+                            </thead>
+                            <tbody id="tablaMecGeneralBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div id="panelDetalleMecSeleccionado" class="panel hidden" style="margin-top:1.2rem; margin-bottom:0;">
+                        <div class="panel-head">
+                            <h3 id="tituloDetalleMecSel">Trabajos Realizados</h3>
+                            <button class="btn-sm" onclick="document.getElementById('panelDetalleMecSeleccionado').classList.add('hidden')">Cerrar</button>
+                        </div>
+                        <div style="overflow-x:auto;">
+                            <table>
+                                <thead>
+                                    <tr><th>Orden</th><th>Fecha</th><th>Placa / Vehículo</th><th>Actividad / Falla</th><th>Monto Servicio</th><th>Ganancia Actividad</th></tr>
+                                </thead>
+                                <tbody id="tablaDetalleMecSelBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL 1: NUEVA ORDEN / COTIZACIÓN -->
+    <div class="modal-backdrop" id="modalOrden">
+        <div class="modal">
+            <h3>Nueva Orden de Trabajo / Cotización</h3>
+            <form id="formNuevaOrden">
+                <div class="form-grid">
+                    <div class="field">
+                        <label>Tipo de Registro</label>
+                        <select id="selTipoRegistroOrden">
+                            <option value="ORDEN">Orden de Trabajo</option>
+                            <option value="COTIZACION">Cotización / Presupuesto</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Servicio Técnico Predeterminado</label>
+                        <select id="selServicioOrden" onchange="aplicarServicioAOrden()"></select>
+                    </div>
+                    <div class="field form-full">
+                        <label>Asignación de Mecánico</label>
+                        <select id="selMecanicoNuevaOrden">
+                            <option value="SIN_ASIGNAR">Bolsa general (cualquier mecánico puede tomarla)</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>DNI / RUC (Autocompleta si existe)</label>
+                        <input type="text" id="inDni" required placeholder="72849102" oninput="autocompletarPorDniOPlaca()">
+                    </div>
+                    <div class="field"><label>Cliente</label><input type="text" id="inCliente" required></div>
+                    <div class="field"><label>Correo Cliente</label><input type="email" id="inEmailCli" value="cliente@mecanix.com"></div>
+                    <div class="field"><label>Teléfono</label><input type="text" id="inTelefono" required></div>
+                    <div class="field">
+                        <label>Placa (Autocompleta si existe)</label>
+                        <input type="text" id="inPlaca" required oninput="autocompletarPorDniOPlaca()">
+                    </div>
+                    <div class="field"><label>Marca</label><input type="text" id="inMarca" required></div>
+                    <div class="field"><label>Modelo</label><input type="text" id="inModelo" required></div>
+                    <div class="field"><label>Tarifa Servicio / Mano de Obra (S/)</label><input type="number" id="inCosto" step="0.01" required value="180.00"></div>
+                    <div class="field form-full"><label>Falla / Servicio Solicitado</label><textarea id="inFalla" rows="2" required></textarea></div>
+                    <div class="field form-full">
+                        <label>Información Adicional (Kilometraje, combustible, notas propias para la orden/cotización)</label>
+                        <textarea id="inInfoAdicional" rows="2" placeholder="Ej: 48,500 km · Gasolina · Observaciones del cliente o unidad"></textarea>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-ghost" onclick="cerrarModales()">Cancelar</button>
+                    <button type="submit" class="btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: DETALLE DE ORDEN + INFORMACIÓN ADICIONAL + CONFIRMAR PAGO -->
+    <div class="modal-backdrop" id="modalDetalle">
+        <div class="modal" style="max-width:660px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                <h3 id="detTitulo">Orden</h3>
+                <div style="display:flex; gap:6px;">
+                    <span class="pill" id="detBadge">ESTADO</span>
+                    <span class="pill" id="detPagoBadge">PAGO</span>
+                </div>
+            </div>
+            <p id="detSub" style="color:var(--muted); font-size:0.82rem; margin-top:4px;"></p>
+            <p id="detFechaEmision" style="color:var(--muted); font-size:0.78rem; margin-top:2px;"></p>
+
+            <div class="receipt-box">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <strong style="font-size:0.84rem;">📝 Información Adicional</strong>
+                    <button type="button" class="btn-sm no-print" onclick="guardarInfoAdicionalOrden()">💾 Guardar Info</button>
+                </div>
+                <textarea id="detInfoAdicional" rows="2" style="width:100%; background:var(--bg-surface); border:1px solid var(--border-light); border-radius:8px; color:var(--text); padding:0.5rem 0.7rem; font-size:0.82rem;" placeholder="Agrega o actualiza información adicional propia de la orden o cotización..."></textarea>
+            </div>
+
+            <div id="boxAsignarRep" class="receipt-box hidden">
+                <div class="tabs-mini">
+                    <button type="button" class="tab-btn active" id="tabBtnPieza" onclick="cambiarTabItem('REPUESTO')">🔩 Agregar Pieza del Almacén</button>
+                    <button type="button" class="tab-btn" id="tabBtnServ" onclick="cambiarTabItem('SERVICIO')">🔧 Agregar Mano de Obra</button>
+                </div>
+
+                <form id="formAsignarRep" class="item-form-grid">
+                    <select id="selRepuesto"></select>
+                    <input type="number" id="inCantRep" min="1" value="1" placeholder="Cant.">
+                    <button type="submit" class="btn-primary">+ Usar Pieza</button>
+                </form>
+
+                <div id="wrapManoObra" class="hidden">
+                    <div class="field" style="margin-bottom:8px;">
+                        <label>Seleccionar Servicio Predeterminado</label>
+                        <select id="selServicioDetalle" onchange="aplicarServicioAManoObra()"></select>
+                    </div>
+                    <form id="formAsignarServ" class="item-form-grid serv-grid">
+                        <input type="text" id="inServDesc" placeholder="Descripción del servicio" required>
+                        <input type="number" id="inServHoras" step="0.5" min="0.5" value="1" placeholder="Hrs" required>
+                        <input type="number" id="inServPrecio" step="0.01" min="1" value="80" placeholder="S/ x Hr" required>
+                        <button type="submit" class="btn-primary">+ Añadir</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="receipt-box">
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>Concepto</th><th>Tipo</th><th>Cant.</th><th>Subtotal</th><th id="thQuitar" class="no-print"></th></tr></thead>
+                        <tbody id="detItemsBody"></tbody>
+                    </table>
+                </div>
+                <div style="margin-top:0.9rem; padding-top:0.7rem; border-top:1px solid var(--border); text-align:right; font-size:0.84rem;">
+                    <div style="color:var(--muted);">Subtotal: <strong id="detSubTotal" style="color:var(--text);">S/ 0.00</strong></div>
+                    <div style="color:var(--muted);">IGV (18%): <strong id="detIgv" style="color:var(--text);">S/ 0.00</strong></div>
+                    <div style="font-size:1.05rem; color:var(--primary); margin-top:3px;">Total Documento: <strong id="detTotal">S/ 0.00</strong></div>
+                </div>
+            </div>
+
+            <div id="boxConfirmarPago" class="receipt-box hidden" style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+                <div style="font-size:0.82rem;">
+                    <strong>Ciclo de Cobro:</strong> <span id="detInfoPago" style="color:var(--muted);">Pendiente de confirmación</span>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <select id="selMetodoPago" class="status-select">
+                        <option value="EFECTIVO">EFECTIVO</option>
+                        <option value="YAPE_PLIN">YAPE / PLIN</option>
+                        <option value="TARJETA">TARJETA</option>
+                        <option value="TRANSFERENCIA">TRANSFERENCIA</option>
+                    </select>
+                    <button type="button" class="btn-success-sm" id="btnConfirmarPagoModal" onclick="confirmarPagoOrdenActual()">✅ Confirmar Pago</button>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-ghost" onclick="emitirYArchivar('COTIZACION')">📄 Archivar Cotización</button>
+                <button type="button" class="btn-primary" onclick="emitirYArchivar('BOLETA')">🖨️ Emitir Boleta e Imprimir</button>
+                <button type="button" class="btn-ghost" onclick="cerrarModales()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: AJUSTE MANUAL DE INVENTARIO -->
+    <div class="modal-backdrop" id="modalAjusteStock">
+        <div class="modal" style="max-width:460px;">
+            <h3>⚖️ Ajuste Manual de Inventario</h3>
+            <p id="ajusteRepLabel" style="color:var(--muted); font-size:0.84rem; margin-top:4px;"></p>
+            <form id="formAjusteStock">
+                <input type="hidden" id="ajusteRepId">
+                <div class="form-grid">
+                    <div class="field">
+                        <label>Tipo de Ajuste</label>
+                        <select id="ajusteModo">
+                            <option value="EXACTO">Fijar Stock Exacto</option>
+                            <option value="SUMAR">Sumar Unidades (+)</option>
+                            <option value="RESTAR">Restar Unidades (-)</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Cantidad / Nuevo Valor</label>
+                        <input type="number" id="ajusteValor" min="0" required value="0">
+                    </div>
+                    <div class="field form-full">
+                        <label>Motivo del Ajuste (Obligatorio para Kardex)</label>
+                        <textarea id="ajusteMotivo" rows="2" required placeholder="Ej: Error al descontar pieza en OT-2026-0001 / Conteo físico"></textarea>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-ghost" onclick="cerrarModales()">Cancelar</button>
+                    <button type="submit" class="btn-primary">Aplicar Ajuste</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 4: NUEVO REPUESTO -->
+    <div class="modal-backdrop" id="modalRepuesto">
+        <div class="modal">
+            <h3>Nuevo Repuesto en Almacén</h3>
+            <form id="formNuevoRep">
+                <div class="form-grid">
+                    <div class="field"><label>Código SKU</label><input type="text" id="repCod" required placeholder="REP-026"></div>
+                    <div class="field"><label>Stock Inicial</label><input type="number" id="repStock" min="0" required value="10"></div>
+                    <div class="field form-full"><label>Nombre Repuesto</label><input type="text" id="repNombre" required></div>
+                    <div class="field form-full"><label>Precio Unitario (S/)</label><input type="number" id="repPrecio" step="0.01" required value="90.00"></div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-ghost" onclick="cerrarModales()">Cancelar</button>
+                    <button type="submit" class="btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 5: RESTABLECER CONTRASEÑA (ADMIN) -->
+    <div class="modal-backdrop" id="modalResetPass">
+        <div class="modal" style="max-width:420px;">
+            <h3>🔑 Restablecer Contraseña</h3>
+            <p id="resetUserLabel" style="color:var(--muted); font-size:0.85rem; margin-top:4px;"></p>
+            <form id="formResetPass">
+                <input type="hidden" id="resetUserId">
+                <div class="field" style="margin-top:1rem;"><label>Nueva Contraseña</label><input type="text" id="inNuevaClave" required value="123456"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-ghost" onclick="cerrarModales()">Cancelar</button>
+                    <button type="submit" class="btn-primary">Guardar Clave</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 6: NUEVO USUARIO -->
+    <div class="modal-backdrop" id="modalUsuario">
+        <div class="modal">
+            <h3>Registrar Nuevo Miembro</h3>
+            <form id="formNuevoUsuario">
+                <div class="form-grid">
+                    <div class="field form-full"><label>Nombre Completo</label><input type="text" id="usrNombre" required></div>
+                    <div class="field"><label>Correo</label><input type="email" id="usrEmail" required></div>
+                    <div class="field">
+                        <label>Rol</label>
+                        <select id="usrRol">
+                            <option value="MECANICO">MECÁNICO</option>
+                            <option value="RECEPCIONISTA">RECEPCIONISTA</option>
+                            <option value="CLIENTE">CLIENTE</option>
+                            <option value="ADMIN">ADMIN</option>
+                        </select>
+                    </div>
+                    <div class="field form-full">
+                        <label>Contraseña Inicial (por defecto 123456)</label>
+                        <input type="text" id="usrPass" required value="123456">
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-ghost" onclick="cerrarModales()">Cancelar</button>
+                    <button type="submit" class="btn-primary">Crear Acceso</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 7: NUEVA CITA CON FECHA/HORA MANUAL DIRECTA -->
+    <div class="modal-backdrop" id="modalCita">
+        <div class="modal" style="max-width:560px;">
+            <h3>Agendar Cita de Taller</h3>
+            <form id="formNuevaCita">
+                <div class="form-grid">
+                    <div class="field form-full" id="wrapCitaRegistroPrevio">
+                        <label>Coincidir con Cliente / Vehículo Registrado (Opcional)</label>
+                        <select id="citaRegistroPrevio" onchange="autocompletarCitaDesdeVehiculo()">
+                            <option value="">-- Seleccionar vehículo/cliente existente o ingresar manual --</option>
+                        </select>
+                    </div>
+                    <div class="field form-full">
+                        <label>Fecha y Hora de la Cita (Selección manual)</label>
+                        <div class="form-grid-4">
+                            <select id="citaAnio" required>
+                                <option value="2026" selected>2026</option>
+                                <option value="2027">2027</option>
+                            </select>
+                            <select id="citaMes" required>
+                                <option value="" disabled selected>Mes</option>
+                                <option value="01">Enero</option>
+                                <option value="02">Febrero</option>
+                                <option value="03">Marzo</option>
+                                <option value="04">Abril</option>
+                                <option value="05">Mayo</option>
+                                <option value="06">Junio</option>
+                                <option value="07">Julio</option>
+                                <option value="08">Agosto</option>
+                                <option value="09">Septiembre</option>
+                                <option value="10">Octubre</option>
+                                <option value="11">Noviembre</option>
+                                <option value="12">Diciembre</option>
+                            </select>
+                            <input type="number" id="citaDia" min="1" max="31" placeholder="Día (1-31)" required>
+                            <input type="time" id="citaHora" required>
+                        </div>
+                    </div>
+                    <div class="field"><label>Placa</label><input type="text" id="citaPlaca" required placeholder="ABC-123" oninput="buscarCoincidenciaEnVivo()"></div>
+                    <div class="field"><label>Cliente</label><input type="text" id="citaCliente" required placeholder="Nombre o Razón Social"></div>
+                    <div class="field"><label>DNI / RUC</label><input type="text" id="citaDni" placeholder="Opcional"></div>
+                    <div class="field"><label>Correo</label><input type="email" id="citaEmail" placeholder="cliente@correo.com" oninput="buscarCoincidenciaEnVivo()"></div>
+                    <div class="field form-full"><label>Teléfono</label><input type="text" id="citaTelefono" placeholder="999999999"></div>
+                    <div class="field form-full">
+                        <label>Motivo (Opciones predefinidas)</label>
+                        <select id="citaMotivo" onchange="toggleMotivoOtro()">
+                            <option value="Diagnóstico computarizado / Scanner">Diagnóstico computarizado / Scanner</option>
+                            <option value="Mantenimiento preventivo 10,000 km">Mantenimiento preventivo 10,000 km</option>
+                            <option value="Revisión de frenos y pastillas">Revisión de frenos y pastillas</option>
+                            <option value="Suspensión, rótulas y alineamiento">Suspensión, rótulas y alineamiento</option>
+                            <option value="Sistema eléctrico y batería">Sistema eléctrico y batería</option>
+                            <option value="Revisión de unidad de flota">Revisión de unidad de flota</option>
+                            <option value="OTRO">Otro motivo...</option>
+                        </select>
+                    </div>
+                    <div class="field form-full hidden" id="grupoMotivoOtro">
+                        <label>Especificar motivo</label>
+                        <input type="text" id="citaMotivoOtro" placeholder="Describe el motivo de la cita">
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-ghost" onclick="cerrarModales()">Cancelar</button>
+                    <button type="submit" class="btn-primary">Agendar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 8: CAMBIAR MI PROPIA CLAVE -->
+    <div class="modal-backdrop" id="modalMiClave">
+        <div class="modal" style="max-width:420px;">
+            <h3>🔐 Cambiar Mi Contraseña</h3>
+            <p style="color:var(--muted); font-size:0.83rem; margin-top:4px;">Tu contraseña se almacena cifrada con BCrypt.</p>
+            <form id="formMiClave">
+                <div class="field" style="margin-top:0.9rem;"><label>Contraseña Actual</label><input type="password" id="miClaveActual" required></div>
+                <div class="field" style="margin-top:0.75rem;"><label>Nueva Contraseña</label><input type="password" id="miClaveNueva" required minlength="4"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-ghost" onclick="cerrarModales()">Cancelar</button>
+                    <button type="submit" class="btn-primary">Actualizar Clave</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 9: AÑADIR / ACTUALIZAR SERVICIO EN GUÍA -->
+    <div class="modal-backdrop" id="modalServicio">
+        <div class="modal" style="max-width:480px;">
+            <h3 id="tituloModalServicio">Añadir Servicio Técnico</h3>
+            <form id="formServicio">
+                <input type="hidden" id="srvEditIndex" value="-1">
+                <div class="form-grid">
+                    <div class="field"><label>Código</label><input type="text" id="srvCodigo" required placeholder="SRV-06"></div>
+                    <div class="field"><label>Categoría</label><input type="text" id="srvCategoria" required placeholder="Preventivo"></div>
+                    <div class="field form-full"><label>Servicio Técnico</label><input type="text" id="srvNombre" required placeholder="Cambio de aceite de caja ATF"></div>
+                    <div class="field"><label>Tiempo Estimado (hrs)</label><input type="number" id="srvHoras" step="0.5" min="0.5" required value="1.0"></div>
+                    <div class="field"><label>Tarifa Base (S/)</label><input type="number" id="srvTarifa" step="0.01" min="0" required value="120.00"></div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-ghost" onclick="cerrarModales()">Cancelar</button>
+                    <button type="submit" class="btn-primary">Guardar Servicio</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const rawUser = localStorage.getItem("mecanix_user") || sessionStorage.getItem("mecanix_user");
+        if (!rawUser) window.location.href = "index.html";
+        const user = JSON.parse(rawUser);
+
+        document.getElementById("roleBadge").textContent = user.rol;
+        document.getElementById("sidebarUserName").textContent = user.nombre;
+        document.getElementById("sidebarRoleLabel").textContent = `● ${user.rol} · Sede Ica`;
+        document.getElementById("pageTitle").textContent = `Bienvenido, ${user.nombre}`;
+
+        const subtitulosRol = {
+            ADMIN: "Control integral de operaciones, almacén, facturación y seguridad",
+            RECEPCIONISTA: "Mostrador y atención al cliente · Recepción de vehículos, citas y comprobantes",
+            MECANICO: "Área técnica · Diagnóstico, registro de piezas usadas y avance de reparación",
+            CLIENTE: "Portal del propietario · Seguimiento en vivo de tu vehículo, citas y pagos"
+        };
+        document.getElementById("pageSubtitle").textContent = subtitulosRol[user.rol] || "";
+
+        if (user.rol === "CLIENTE") {
+            document.querySelector(".search-bar").classList.add("hidden");
+            document.getElementById("tituloOrdenes").textContent = "🚗 Seguimiento en Vivo de Mis Vehículos";
+            document.getElementById("subtituloOrdenes").textContent = "Consulta el avance de reparación, revisa tu comprobante o confirma tu método de pago.";
+        }
+
+        if (user.rol === "MECANICO") {
+            document.getElementById("filtroAlcanceOrdenes").classList.remove("hidden");
+        }
+
+        if (user.rol === "RECEPCIONISTA") {
+            document.getElementById("widgetsInferiores").classList.add("hidden");
+        }
+
+        if (user.rol === "ADMIN" || user.rol === "RECEPCIONISTA" || user.rol === "CLIENTE") {
+            document.getElementById("btnAgendarCita").classList.remove("hidden");
+        }
+
+        function renderAccionesRapidasPorRol() {
+            const grid = document.getElementById("quickActionsGrid");
+            if (!grid) return;
+
+            if (user.rol === "ADMIN") {
+                grid.innerHTML = `
+                    <button class="quick-btn featured" onclick="irAVista('viewAuditoria')">
+                        <span class="quick-icon">🕵️</span><strong>Auditoría Rápida</strong><span class="quick-sub">Revisar actividad reciente</span>
+                    </button>
+                    <button class="quick-btn" onclick="irAVista('viewRepuestos')">
+                        <span class="quick-icon">⚖️</span><strong>Ajustar Stock</strong><span class="quick-sub">Corregir existencias</span>
+                    </button>
+                    <button class="quick-btn" onclick="irAVista('viewHistorialMecanicos')">
+                        <span class="quick-icon">🏅</span><strong>Historial Mecánicos</strong><span class="quick-sub">Rendimiento y ganancia</span>
+                    </button>
+                    <button class="quick-btn" onclick="irAVista('viewUsuarios')">
+                        <span class="quick-icon">🔑</span><strong>Miembros y Claves</strong><span class="quick-sub">Accesos del taller</span>
+                    </button>
+                `;
+            } else if (user.rol === "RECEPCIONISTA") {
+                grid.innerHTML = `
+                    <button class="quick-btn featured" onclick="abrirModalCita()">
+                        <span class="quick-icon">📅</span><strong>Agendar Cita</strong><span class="quick-sub">Online o presencial</span>
+                    </button>
+                    <button class="quick-btn" onclick="abrirModalNuevaOrden('COTIZACION')">
+                        <span class="quick-icon">🧾</span><strong>Nueva Cotización</strong><span class="quick-sub">Autocompleta DNI/Placa</span>
+                    </button>
+                    <button class="quick-btn" onclick="irAVista('viewClientes')">
+                        <span class="quick-icon">👥</span><strong>Directorio Flota</strong><span class="quick-sub">Clientes y unidades</span>
+                    </button>
+                    <button class="quick-btn" onclick="irAVista('viewFinanzas')">
+                        <span class="quick-icon">💰</span><strong>Confirmar Pagos</strong><span class="quick-sub">Cobros pendientes</span>
+                    </button>
+                `;
+            } else if (user.rol === "MECANICO") {
+                grid.innerHTML = `
+                    <button class="quick-btn featured" onclick="irAVista('viewOrdenes')">
+                        <span class="quick-icon">🔧</span><strong>Mis Órdenes</strong><span class="quick-sub">Asignadas y bolsa</span>
+                    </button>
+                    <button class="quick-btn" onclick="irAVista('viewKardex')">
+                        <span class="quick-icon">📦</span><strong>Usos de Piezas</strong><span class="quick-sub">Kardex técnico</span>
+                    </button>
+                    <button class="quick-btn" onclick="irAVista('viewRepuestos')">
+                        <span class="quick-icon">⚖️</span><strong>Ajustar Stock</strong><span class="quick-sub">Revisar inventario</span>
+                    </button>
+                    <button class="quick-btn" onclick="irAVista('viewHistorialMecanicos')">
+                        <span class="quick-icon">🏅</span><strong>Mi Historial</strong><span class="quick-sub">Trabajos y ganancia</span>
+                    </button>
+                `;
+            } else {
+                grid.innerHTML = `
+                    <button class="quick-btn featured" onclick="abrirModalCita()">
+                        <span class="quick-icon">📅</span><strong>Agendar Cita</strong><span class="quick-sub">Opciones predefinidas</span>
+                    </button>
+                    <button class="quick-btn" onclick="irAVista('viewOrdenes')">
+                        <span class="quick-icon">🚗</span><strong>Mi Vehículo</strong><span class="quick-sub">Avance y pago</span>
+                    </button>
+                    <button class="quick-btn" onclick="irAVista('viewDocumentos')">
+                        <span class="quick-icon">📄</span><strong>Mis Boletas</strong><span class="quick-sub">Comprobantes</span>
+                    </button>
+                    <button class="quick-btn" onclick="irAVista('viewCitas')">
+                        <span class="quick-icon">🕒</span><strong>Mis Citas</strong><span class="quick-sub">Historial de atención</span>
+                    </button>
+                `;
+            }
+        }
+        renderAccionesRapidasPorRol();
+
+        const serviciosDefault = [
+            { codigo: "SRV-01", nombre: "Mantenimiento Preventivo 10,000 km (Aceite + Filtros)", categoria: "Preventivo", horas: 1.5, tarifa: 180.00 },
+            { codigo: "SRV-02", nombre: "Diagnóstico Computarizado Scanner OBD-II", categoria: "Electrónica", horas: 0.5, tarifa: 80.00 },
+            { codigo: "SRV-03", nombre: "Cambio de Pastillas y Rectificado de Discos", categoria: "Frenos", horas: 2.0, tarifa: 150.00 },
+            { codigo: "SRV-04", nombre: "Afinamiento Electrónico e Inyectores", categoria: "Motor", horas: 2.5, tarifa: 220.00 },
+            { codigo: "SRV-05", nombre: "Alineamiento 3D y Balanceo Computarizado", categoria: "Suspensión", horas: 1.0, tarifa: 90.00 }
+        ];
+        let serviciosTarifario = JSON.parse(localStorage.getItem("mecanix_servicios") || "null") || serviciosDefault;
+
+        function guardarTarifarioLocal() {
+            localStorage.setItem("mecanix_servicios", JSON.stringify(serviciosTarifario));
+            poblarSelectoresServicios();
+            renderTarifario();
+        }
+
+        function poblarSelectoresServicios() {
+            const opts = `<option value="">-- Servicio predeterminado (opcional) --</option>` +
+                serviciosTarifario.map((s, i) =>
+                    `<option value="${i}">${s.codigo} · ${s.nombre} (${Number(s.horas).toFixed(1)}h · S/ ${Number(s.tarifa).toFixed(2)})</option>`
+                ).join("");
+            const selOrden = document.getElementById("selServicioOrden");
+            const selServ = document.getElementById("selServicioDetalle");
+            if (selOrden) selOrden.innerHTML = opts;
+            if (selServ) selServ.innerHTML = opts;
+        }
+
+        function aplicarServicioAOrden() {
+            const idx = document.getElementById("selServicioOrden").value;
+            if (idx === "") return;
+            const s = serviciosTarifario[Number(idx)];
+            if (!s) return;
+            document.getElementById("inCosto").value = Number(s.tarifa).toFixed(2);
+            document.getElementById("inFalla").value = `${s.codigo} · ${s.nombre} (${Number(s.horas).toFixed(1)} hrs est.)`;
+        }
+
+        function aplicarServicioAManoObra() {
+            const idx = document.getElementById("selServicioDetalle").value;
+            if (idx === "") return;
+            const s = serviciosTarifario[Number(idx)];
+            if (!s) return;
+            document.getElementById("inServDesc").value = `${s.codigo} · ${s.nombre}`;
+            document.getElementById("inServHoras").value = Number(s.horas);
+            document.getElementById("inServPrecio").value = Number(s.tarifa).toFixed(2);
+        }
+
+        function renderTarifario() {
+            document.getElementById("tablaServiciosBody").innerHTML = serviciosTarifario.map((s, idx) => `
+                <tr>
+                    <td><strong>${s.codigo}</strong></td>
+                    <td>${s.nombre}</td>
+                    <td>${s.categoria}</td>
+                    <td>${Number(s.horas).toFixed(1)} hrs</td>
+                    <td><strong>S/ ${Number(s.tarifa).toFixed(2)}</strong></td>
+                    <td class="no-print">
+                        <button class="btn-sm" onclick="editarServicio(${idx})">✏️ Actualizar</button>
+                        <button class="btn-danger-sm" onclick="eliminarServicio(${idx})">🗑️ Eliminar</button>
+                    </td>
+                </tr>
+            `).join("");
+        }
+
+        function abrirModalServicio() {
+            document.getElementById("tituloModalServicio").textContent = "Añadir Servicio Técnico";
+            document.getElementById("srvEditIndex").value = "-1";
+            document.getElementById("srvCodigo").value = `SRV-${String(serviciosTarifario.length + 1).padStart(2, "0")}`;
+            document.getElementById("srvCategoria").value = "Preventivo";
+            document.getElementById("srvNombre").value = "";
+            document.getElementById("srvHoras").value = "1.0";
+            document.getElementById("srvTarifa").value = "120.00";
+            abrirModal("modalServicio");
+        }
+
+        function editarServicio(idx) {
+            const s = serviciosTarifario[idx];
+            if (!s) return;
+            document.getElementById("tituloModalServicio").textContent = "Actualizar Servicio Técnico";
+            document.getElementById("srvEditIndex").value = String(idx);
+            document.getElementById("srvCodigo").value = s.codigo;
+            document.getElementById("srvCategoria").value = s.categoria;
+            document.getElementById("srvNombre").value = s.nombre;
+            document.getElementById("srvHoras").value = s.horas;
+            document.getElementById("srvTarifa").value = s.tarifa;
+            abrirModal("modalServicio");
+        }
+
+        function eliminarServicio(idx) {
+            if (!confirm("¿Eliminar este servicio de la guía?")) return;
+            serviciosTarifario.splice(idx, 1);
+            guardarTarifarioLocal();
+            notificar("Servicio eliminado de la guía.");
+        }
+
+        document.getElementById("formServicio").onsubmit = (e) => {
+            e.preventDefault();
+            const idx = Number(document.getElementById("srvEditIndex").value);
+            const item = {
+                codigo: document.getElementById("srvCodigo").value.trim().toUpperCase(),
+                categoria: document.getElementById("srvCategoria").value.trim(),
+                nombre: document.getElementById("srvNombre").value.trim(),
+                horas: parseFloat(document.getElementById("srvHoras").value),
+                tarifa: parseFloat(document.getElementById("srvTarifa").value)
+            };
+            if (idx >= 0 && serviciosTarifario[idx]) {
+                serviciosTarifario[idx] = item;
+                notificar(`Servicio ${item.codigo} actualizado.`);
+            } else {
+                serviciosTarifario.push(item);
+                notificar(`Servicio ${item.codigo} añadido a la guía.`);
+            }
+            guardarTarifarioLocal();
+            cerrarModales();
+        };
+
+        async function abrirModalNuevaOrden(tipoInicial = "ORDEN", prefill = null) {
+            poblarSelectoresServicios();
+            await cargarMecanicosSelect();
+            document.getElementById("selTipoRegistroOrden").value = tipoInicial || "ORDEN";
+            document.getElementById("inInfoAdicional").value = "";
+            if (prefill) {
+                if (prefill.dni) document.getElementById("inDni").value = prefill.dni;
+                if (prefill.cliente) document.getElementById("inCliente").value = prefill.cliente;
+                if (prefill.email) document.getElementById("inEmailCli").value = prefill.email;
+                if (prefill.telefono) document.getElementById("inTelefono").value = prefill.telefono;
+                if (prefill.placa) document.getElementById("inPlaca").value = prefill.placa;
+                if (prefill.falla) document.getElementById("inFalla").value = prefill.falla;
+                if (prefill.infoAdicional) document.getElementById("inInfoAdicional").value = prefill.infoAdicional;
+                autocompletarPorDniOPlaca();
+            }
+            abrirModal("modalOrden");
+        }
+
+        function autocompletarPorDniOPlaca() {
+            const dniVal = (document.getElementById("inDni")?.value || "").trim().toLowerCase();
+            const placaVal = (document.getElementById("inPlaca")?.value || "").trim().toLowerCase();
+            if (!dniVal && !placaVal) return;
+
+            const matchVeh = vehiculosCache.find(v =>
+                (placaVal && v.placa && v.placa.toLowerCase() === placaVal) ||
+                (dniVal && v.cliente && v.cliente.dniRuc && v.cliente.dniRuc.toLowerCase() === dniVal)
+            );
+
+            if (matchVeh) {
+                if (!placaVal && matchVeh.placa) document.getElementById("inPlaca").value = matchVeh.placa;
+                if (matchVeh.marca) document.getElementById("inMarca").value = matchVeh.marca;
+                if (matchVeh.modelo) document.getElementById("inModelo").value = matchVeh.modelo;
+                if (matchVeh.cliente) {
+                    if (!dniVal && matchVeh.cliente.dniRuc) document.getElementById("inDni").value = matchVeh.cliente.dniRuc;
+                    document.getElementById("inCliente").value = matchVeh.cliente.nombreCompleto || "";
+                    document.getElementById("inEmailCli").value = matchVeh.cliente.email || "cliente@mecanix.com";
+                    document.getElementById("inTelefono").value = matchVeh.cliente.telefono || "";
+                }
+            } else if (dniVal) {
+                const soloCli = vehiculosCache.map(v => v.cliente).find(c => c && c.dniRuc && c.dniRuc.toLowerCase() === dniVal);
+                if (soloCli) {
+                    document.getElementById("inCliente").value = soloCli.nombreCompleto || "";
+                    document.getElementById("inEmailCli").value = soloCli.email || "cliente@mecanix.com";
+                    document.getElementById("inTelefono").value = soloCli.telefono || "";
+                }
+            }
+        }
+
+        async function guardarInfoAdicionalOrden() {
+            if (!ordenActualObj) return;
+            try {
+                await safeFetchJson(`/api/taller/ordenes/${ordenActualObj.orden.idOrden}/info-adicional`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        informacionAdicional: document.getElementById("detInfoAdicional").value,
+                        responsable: user.nombre
+                    })
+                });
+                notificar("Información adicional guardada en la orden.");
+                await cargarTodo();
+            } catch (e) {
+                notificar(e.message, true);
+            }
+        }
+
+        function fmtFechaHora(valor) {
+            if (!valor) return "-";
+            const d = new Date(valor);
+            if (isNaN(d.getTime())) return String(valor);
+            return d.toLocaleString("es-PE", {
+                day: "2-digit", month: "2-digit", year: "numeric",
+                hour: "2-digit", minute: "2-digit"
+            });
+        }
+
+        async function safeFetchJson(url, options = {}) {
+            const res = await fetch(url, options);
+            let data = null;
+            try { data = await res.json(); } catch (_) { data = {}; }
+            if (!res.ok) {
+                throw new Error(data.mensaje || `Error HTTP ${res.status}`);
+            }
+            return data;
+        }
+
+        function notificar(msg, esError = false) {
+            const t = document.getElementById("toast");
+            t.textContent = msg;
+            t.className = "toast show" + (esError ? " error" : "");
+            clearTimeout(window._toastTimer);
+            window._toastTimer = setTimeout(() => t.classList.remove("show"), 3500);
+        }
+
+        const menusPorRol = {
+            ADMIN: [
+                { grupo: "PRINCIPAL", items: [
+                    { id: "viewInicio", icon: "📊", label: "Dashboard" },
+                    { id: "viewCitas", icon: "📅", label: "Citas y Agenda" }
+                ]},
+                { grupo: "OPERACIONAL", items: [
+                    { id: "viewOrdenes", icon: "📋", label: "Órdenes de Trabajo" },
+                    { id: "viewCotizaciones", icon: "🧾", label: "Cotizaciones" },
+                    { id: "viewClientes", icon: "👥", label: "Clientes y Vehículos" },
+                    { id: "viewServicios", icon: "🔧", label: "Guía de Servicios" }
+                ]},
+                { grupo: "ALMACÉN Y DOCUMENTOS", items: [
+                    { id: "viewRepuestos", icon: "🔩", label: "Inventario Repuestos" },
+                    { id: "viewKardex", icon: "📦", label: "Usos de Inventario" },
+                    { id: "viewDocumentos", icon: "📄", label: "Récord Documentos" }
+                ]},
+                { grupo: "FINANZAS Y CONTROL", items: [
+                    { id: "viewFinanzas", icon: "💰", label: "Caja y Pagos" },
+                    { id: "viewHistorialMecanicos", icon: "🏅", label: "Historial Mecánicos" },
+                    { id: "viewUsuarios", icon: "🔑", label: "Miembros y Claves" },
+                    { id: "viewAuditoria", icon: "🕵️", label: "Auditoría Sistema" },
+                    { id: "viewConfig", icon: "⚙️", label: "Configuración Taller" }
+                ]}
+            ],
+            RECEPCIONISTA: [
+                { grupo: "PRINCIPAL", items: [
+                    { id: "viewInicio", icon: "📊", label: "Resumen Mostrador" },
+                    { id: "viewCitas", icon: "📅", label: "Citas y Agenda" }
+                ]},
+                { grupo: "OPERACIONAL", items: [
+                    { id: "viewOrdenes", icon: "📋", label: "Órdenes de Trabajo" },
+                    { id: "viewCotizaciones", icon: "🧾", label: "Cotizaciones" },
+                    { id: "viewClientes", icon: "👥", label: "Clientes y Vehículos" },
+                    { id: "viewServicios", icon: "🔧", label: "Guía de Servicios" },
+                    { id: "viewDocumentos", icon: "📄", label: "Documentos Emitidos" }
+                ]}
+            ],
+            MECANICO: [
+                { grupo: "ÁREA TÉCNICA", items: [
+                    { id: "viewOrdenes", icon: "🔧", label: "Mis Órdenes y Piezas" },
+                    { id: "viewHistorialMecanicos", icon: "🏅", label: "Mi Historial y Ganancias" },
+                    { id: "viewRepuestos", icon: "🔩", label: "Almacén y Ajustes" },
+                    { id: "viewKardex", icon: "📦", label: "Usos de Inventario" },
+                    { id: "viewServicios", icon: "📋", label: "Guía de Servicios" }
+                ]}
+            ],
+            CLIENTE: [
+                { grupo: "MI PORTAL", items: [
+                    { id: "viewOrdenes", icon: "🚗", label: "Estado de Mi Vehículo" },
+                    { id: "viewCitas", icon: "📅", label: "Mis Citas" },
+                    { id: "viewDocumentos", icon: "📄", label: "Mis Boletas" }
+                ]}
+            ]
+        };
+
+        if (user.rol === "ADMIN" || user.rol === "RECEPCIONISTA") {
+            document.getElementById("btnTopNuevaOrden").classList.remove("hidden");
+            document.getElementById("btnTopNuevaOrden").onclick = () => abrirModalNuevaOrden("ORDEN");
+        }
+        if (user.rol === "ADMIN") {
+            document.getElementById("btnAbrirModalRep").classList.remove("hidden");
+            document.getElementById("btnAbrirModalRep").onclick = () => abrirModal("modalRepuesto");
+        }
+
+        const sidebarEl = document.getElementById("sidebarContainer");
+        const estructura = menusPorRol[user.rol] || menusPorRol.CLIENTE;
+        estructura.forEach((sec) => {
+            const lbl = document.createElement("div");
+            lbl.className = "nav-section-label";
+            lbl.textContent = sec.grupo;
+            sidebarEl.appendChild(lbl);
+
+            const ul = document.createElement("ul");
+            ul.className = "nav-list";
+            sec.items.forEach((it) => {
+                const li = document.createElement("li");
+                li.className = "nav-item";
+                li.dataset.target = it.id;
+                li.innerHTML = `<span>${it.icon}</span><span>${it.label}</span>`;
+                li.onclick = () => irAVista(it.id);
+                ul.appendChild(li);
+            });
+            sidebarEl.appendChild(ul);
+        });
+
+        const allViews = [
+            "viewInicio", "viewCitas", "viewOrdenes", "viewCotizaciones", "viewClientes",
+            "viewServicios", "viewRepuestos", "viewKardex", "viewDocumentos",
+            "viewFinanzas", "viewUsuarios", "viewAuditoria", "viewConfig", "viewHistorialMecanicos"
+        ];
+        const idsPermitidos = estructura.flatMap(g => g.items.map(i => i.id));
+        const vistaGuardada = sessionStorage.getItem("mecanix_last_view");
+
+        function irAVista(vistaId) {
+            const destino = idsPermitidos.includes(vistaId) ? vistaId : idsPermitidos[0];
+            sessionStorage.setItem("mecanix_last_view", destino);
+            document.querySelectorAll(".nav-item").forEach(el => el.classList.toggle("active", el.dataset.target === destino));
+            allViews.forEach(id => document.getElementById(id).classList.toggle("hidden", id !== destino));
+            if (destino === "viewKardex") cargarKardex();
+            if (destino === "viewAuditoria") cargarAuditoriaFiltrada();
+            if (destino === "viewUsuarios") cargarUsuarios();
+            if (destino === "viewCitas") cargarCitas();
+            if (destino === "viewServicios") renderTarifario();
+            if (destino === "viewHistorialMecanicos") cargarHistorialMecanicos();
+        }
+        irAVista(vistaGuardada || idsPermitidos[0]);
+
+        let ordenesCache = [];
+        let repuestosCache = [];
+        let vehiculosCache = [];
+        let mecanicosCache = [];
+        let historialMecanicosCache = [];
+        let ordenActualObj = null;
+
+        async function cargarMecanicosSelect() {
+            if (user.rol === "ADMIN" || user.rol === "RECEPCIONISTA") {
+                try {
+                    const usuarios = await safeFetchJson("/api/taller/usuarios");
+                    mecanicosCache = usuarios.filter(u => u.rol && u.rol.nombre === "MECANICO" && u.activo);
+                } catch (_) {
+                    mecanicosCache = [];
+                }
+            }
+            const selNueva = document.getElementById("selMecanicoNuevaOrden");
+            if (selNueva && mecanicosCache.length > 0) {
+                selNueva.innerHTML = `<option value="SIN_ASIGNAR">Bolsa general (cualquier mecánico puede tomarla)</option>` +
+                    mecanicosCache.map(m => `<option value="${m.idUsuario}">${m.nombreCompleto} (${m.email})</option>`).join("");
+            }
+        }
+
+        function aplicarFiltroOrdenes() {
+            renderizarOrdenes(ordenesCache);
+        }
+
+        async function tomarOrdenPropia(idOrden) {
+            try {
+                await safeFetchJson(`/api/taller/ordenes/${idOrden}/asignar`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ emailMecanico: user.email, responsable: user.nombre })
+                });
+                notificar("Orden asignada a tu bandeja de trabajo.");
+                await cargarTodo();
+            } catch (e) {
+                notificar(e.message, true);
+            }
+        }
+
+        async function asignarOrdenManual(idOrden, idMecanico) {
+            try {
+                await safeFetchJson(`/api/taller/ordenes/${idOrden}/asignar`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ idMecanico: idMecanico, responsable: user.nombre })
+                });
+                notificar("Asignación de mecánico actualizada.");
+                await cargarTodo();
+            } catch (e) {
+                notificar(e.message, true);
+            }
+        }
+
+        async function cargarTodo() {
+            poblarSelectoresServicios();
+            renderTarifario();
+            await cargarMecanicosSelect();
+
+            try {
+                const kpi = await safeFetchJson("/api/taller/resumen");
+                document.getElementById("kpiOperativos").innerHTML = `
+                    <div class="kpi-card accent-cyan"><div class="kpi-top"><span>Clientes</span><span>👥</span></div><div class="kpi-val">${kpi.totalClientes}</div><div class="kpi-foot">Registrados en SQL Server</div></div>
+                    <div class="kpi-card accent-green"><div class="kpi-top"><span>Vehículos</span><span>🚗</span></div><div class="kpi-val">${kpi.totalVehiculos}</div><div class="kpi-foot">Flota atendida</div></div>
+                    <div class="kpi-card accent-amber"><div class="kpi-top"><span>OT Activas</span><span>📋</span></div><div class="kpi-val">${kpi.ordenesActivas}</div><div class="kpi-foot">${kpi.cotizacionesPendientes} pendientes de aprobar</div></div>
+                    <div class="kpi-card accent-purple"><div class="kpi-top"><span>Docs Emitidos</span><span>📄</span></div><div class="kpi-val">${kpi.documentosEmitidos}</div><div class="kpi-foot">Boletas y cotizaciones</div></div>
+                `;
+                const finGrid = document.getElementById("kpiFinancieros");
+                if (user.rol === "RECEPCIONISTA") {
+                    finGrid.innerHTML = "";
+                    finGrid.classList.add("hidden");
+                } else {
+                    finGrid.classList.remove("hidden");
+                    finGrid.innerHTML = `
+                        <div class="kpi-card accent-green"><div class="kpi-top"><span>Ingresos Facturados</span><span>↗</span></div><div class="kpi-val" style="color:var(--green)">S/ ${Number(kpi.ingresosFacturados).toFixed(2)}</div><div class="kpi-foot">Órdenes finalizadas</div></div>
+                        <div class="kpi-card accent-amber"><div class="kpi-top"><span>Por Cobrar</span><span>⏳</span></div><div class="kpi-val" style="color:var(--amber)">S/ ${Number(kpi.porCobrar).toFixed(2)}</div><div class="kpi-foot">Saldo acumulado en taller</div></div>
+                        <div class="kpi-card accent-cyan"><div class="kpi-top"><span>Total Proyectado</span><span>💰</span></div><div class="kpi-val">S/ ${(Number(kpi.ingresosFacturados) + Number(kpi.porCobrar)).toFixed(2)}</div><div class="kpi-foot">Base imponible</div></div>
+                        <div class="kpi-card accent-red"><div class="kpi-top"><span>Alertas Stock</span><span>⚠️</span></div><div class="kpi-val" style="color:var(--red)">${kpi.repuestosBajoStock}</div><div class="kpi-foot">Repuestos &le; 5 unidades</div></div>
+                    `;
+                }
+            } catch (e) { notificar("KPIs: " + e.message, true); }
+
+            try {
+                const ordenes = await safeFetchJson("/api/taller/ordenes");
+                ordenesCache = ordenes;
+                renderizarOrdenes(ordenes);
+
+                const pendientesCobro = ordenes.filter(o => o.estadoPago !== "PAGADO");
+                document.getElementById("widgetCobros").innerHTML = pendientesCobro.length === 0
+                    ? `<span style="color:var(--green)">✔ Todo al día. No hay saldos pendientes de pago.</span>`
+                    : pendientesCobro.slice(0, 6).map(o => `<div style="padding:6px 0; border-bottom:1px solid var(--border); display:flex; justify-content:space-between;"><span><strong>${o.codigoOrden}</strong> · ${o.vehiculo.cliente.nombreCompleto} (${o.vehiculo.placa})</span><strong style="color:var(--amber)">S/ ${(o.costoEstimado * 1.18).toFixed(2)}</strong></div>`).join("");
+
+                document.getElementById("tablaCotizacionesBody").innerHTML = ordenes.map(o => `
+                    <tr>
+                        <td><strong>${o.codigoOrden}</strong></td>
+                        <td>${fmtFechaHora(o.fechaIngreso)}</td>
+                        <td>${o.vehiculo.cliente.nombreCompleto}</td>
+                        <td>${o.vehiculo.placa} (${o.vehiculo.marca})</td>
+                        <td>${o.descripcionFalla}${o.informacionAdicional ? `<br><small style="color:var(--muted)">Info: ${o.informacionAdicional}</small>` : ''}</td>
+                        <td><strong>S/ ${(o.costoEstimado * 1.18).toFixed(2)}</strong></td>
+                        <td class="no-print"><button class="btn-sm" onclick="verDetalle(${o.idOrden})">📄 Ver / Cotizar</button></td>
+                    </tr>
+                `).join("");
+
+                const puedeConfirmarPago = (user.rol === "ADMIN" || user.rol === "RECEPCIONISTA");
+                document.getElementById("tablaFinanzasBody").innerHTML = ordenes.map(o => {
+                    const totalIgv = Number(o.costoEstimado) * 1.18;
+                    const pagado = o.estadoPago === "PAGADO";
+                    const accionPago = puedeConfirmarPago && !pagado
+                        ? `<button class="btn-success-sm" onclick="confirmarPagoDirecto(${o.idOrden})">✅ Confirmar Pago</button>`
+                        : (pagado ? `<small style="color:var(--muted)">${o.metodoPago || 'CONFIRMADO'}</small>` : '-');
+                    return `<tr>
+                        <td><strong>${o.codigoOrden}</strong></td>
+                        <td>${fmtFechaHora(o.fechaIngreso)}</td>
+                        <td>${o.vehiculo.cliente.nombreCompleto}</td>
+                        <td>${o.vehiculo.placa}</td>
+                        <td><span class="pill st-${o.estado}">${o.estado.replace('_', ' ')}</span></td>
+                        <td><strong>S/ ${totalIgv.toFixed(2)}</strong></td>
+                        <td><span class="pill ${pagado ? 'st-PAGADO' : 'st-PENDIENTE_PAGO'}">${pagado ? 'PAGADO' : 'PENDIENTE_PAGO'}</span></td>
+                        <td class="no-print">${accionPago}</td>
+                    </tr>`;
+                }).join("");
+            } catch (e) { notificar("Órdenes: " + e.message, true); }
+
+            try {
+                const repuestos = await safeFetchJson("/api/taller/repuestos");
+                repuestosCache = repuestos;
+
+                const bajos = repuestos.filter(r => r.stock <= 5);
+                document.getElementById("widgetAlertas").innerHTML = bajos.length === 0
+                    ? `<span style="color:var(--green)">✔ Inventario óptimo. Sin quiebres de stock.</span>`
+                    : bajos.map(r => `<div style="padding:6px 0; border-bottom:1px solid var(--border); display:flex; justify-content:space-between;"><span><strong>${r.codigo}</strong> · ${r.nombre}</span><strong style="color:var(--red)">Quedan ${r.stock} und.</strong></div>`).join("");
+
+                const selRep = document.getElementById("selRepuesto");
+                const kardexSel = document.getElementById("kardexFiltroRep");
+                const prevKardex = kardexSel.value;
+                selRep.innerHTML = "";
+                kardexSel.innerHTML = `<option value="">Todos los repuestos</option>`;
+
+                const puedeAjustar = (user.rol === "ADMIN" || user.rol === "MECANICO");
+                document.getElementById("tablaRepuestosBody").innerHTML = repuestos.map(r => {
+                    selRep.innerHTML += `<option value="${r.idRepuesto}">${r.codigo} · ${r.nombre} (${r.stock} und · S/ ${r.precioUnitario})</option>`;
+                    kardexSel.innerHTML += `<option value="${r.idRepuesto}">${r.codigo} · ${r.nombre}</option>`;
+                    const bajo = r.stock <= 5;
+                    return `<tr>
+                        <td><strong>${r.codigo}</strong></td>
+                        <td>${r.nombre}</td>
+                        <td>S/ ${Number(r.precioUnitario).toFixed(2)}</td>
+                        <td><strong>${r.stock} und.</strong></td>
+                        <td><span class="pill ${bajo ? 'st-PENDIENTE' : 'st-LISTO'}">${bajo ? 'STOCK BAJO' : 'ÓPTIMO'}</span></td>
+                        <td class="no-print">
+                            ${user.rol === 'ADMIN' ? `<button class="btn-sm" onclick="reponer(${r.idRepuesto})">+5 Stock</button>` : ''}
+                            ${puedeAjustar ? `<button class="btn-sm" onclick="abrirAjusteStock(${r.idRepuesto})">⚖️ Ajustar Stock</button>` : '-'}
+                        </td>
+                    </tr>`;
+                }).join("");
+                kardexSel.value = prevKardex;
+            } catch (e) { notificar("Repuestos: " + e.message, true); }
+
+            try {
+                const vehiculos = await safeFetchJson("/api/taller/vehiculos");
+                vehiculosCache = vehiculos;
+                document.getElementById("tablaClientesBody").innerHTML = vehiculos.map(v => `
+                    <tr><td><strong>${v.cliente.dniRuc}</strong></td><td>${v.cliente.nombreCompleto}</td><td>${v.cliente.telefono}</td><td>${v.cliente.email || '-'}</td><td><span class="pill st-EN_REPARACION">${v.placa}</span> ${v.marca} ${v.modelo}</td></tr>
+                `).join("");
+            } catch (e) { notificar("Clientes: " + e.message, true); }
+
+            try {
+                const docsRaw = await safeFetchJson("/api/taller/documentos");
+                const docs = (user.rol === "CLIENTE")
+                    ? docsRaw.filter(d => d.clienteNombre && d.clienteNombre.trim().toLowerCase() === user.nombre.trim().toLowerCase())
+                    : docsRaw;
+                document.getElementById("tablaDocumentosBody").innerHTML = docs.length === 0
+                    ? `<tr><td colspan="7" style="text-align:center; color:var(--muted);">Sin documentos emitidos para esta cuenta.</td></tr>`
+                    : docs.map(d => `
+                        <tr>
+                            <td><strong>${d.numeroDocumento}</strong></td>
+                            <td><span class="pill ${d.tipoDocumento === 'BOLETA' ? 'st-LISTO' : 'st-EN_DIAGNOSTICO'}">${d.tipoDocumento}</span></td>
+                            <td>${d.clienteNombre}</td>
+                            <td>${d.placaVehiculo}</td>
+                            <td><strong>S/ ${Number(d.montoTotal).toFixed(2)}</strong></td>
+                            <td>${d.emitidoPor}</td>
+                            <td>${fmtFechaHora(d.fechaEmision)}</td>
+                        </tr>
+                    `).join("");
+            } catch (e) { notificar("Documentos: " + e.message, true); }
+
+            await cargarCitas();
+
+            if (user.rol === "ADMIN" || user.rol === "MECANICO") {
+                await cargarKardex();
+                await cargarHistorialMecanicos();
+            }
+            if (user.rol === "ADMIN") {
+                await cargarUsuarios();
+                await cargarAuditoriaFiltrada();
+            }
+        }
+
+        async function cargarHistorialMecanicos() {
+            try {
+                const qs = new URLSearchParams({
+                    rol: user.rol || "",
+                    email: user.email || "",
+                    nombre: user.nombre || ""
+                });
+                const data = await safeFetchJson(`/api/taller/mecanicos/historial?${qs.toString()}`);
+                const pct = Number(data.porcentajeGanancia || 35).toFixed(0);
+
+                if (user.rol === "MECANICO") {
+                    document.getElementById("bloqueMecPropio").classList.remove("hidden");
+                    document.getElementById("bloqueMecGeneral").classList.add("hidden");
+                    const m = data.mecanicoActual || {};
+                    document.getElementById("tituloHistorialMec").textContent = `🏅 Mi Historial · ${m.nombreCompleto || user.nombre}`;
+                    document.getElementById("subtituloHistorialMec").textContent = `Resumen de trabajos realizados y ganancia estimada (${pct}% por actividad).`;
+
+                    document.getElementById("kpisMecPropio").innerHTML = `
+                        <div class="kpi-card accent-green"><div class="kpi-top"><span>Trabajos Realizados</span><span>✔</span></div><div class="kpi-val">${m.trabajosRealizados || 0}</div><div class="kpi-foot">Órdenes finalizadas</div></div>
+                        <div class="kpi-card accent-cyan"><div class="kpi-top"><span>Ganancia por Actividad</span><span>💵</span></div><div class="kpi-val" style="color:var(--green)">S/ ${Number(m.gananciaActividad || 0).toFixed(2)}</div><div class="kpi-foot">${pct}% sobre actividades realizadas</div></div>
+                        <div class="kpi-card accent-amber"><div class="kpi-top"><span>Monto Generado</span><span>🔧</span></div><div class="kpi-val">S/ ${Number(m.montoGenerado || 0).toFixed(2)}</div><div class="kpi-foot">Valor acumulado de servicios</div></div>
+                        <div class="kpi-card accent-purple"><div class="kpi-top"><span>En Proceso</span><span>⏳</span></div><div class="kpi-val">${m.enProceso || 0}</div><div class="kpi-foot">Órdenes pendientes o en taller</div></div>
+                    `;
+
+                    const trabajos = m.trabajos || [];
+                    document.getElementById("tablaMecPropioBody").innerHTML = trabajos.length === 0
+                        ? `<tr><td colspan="6" style="text-align:center; color:var(--muted);">Aún no tienes trabajos realizados registrados.</td></tr>`
+                        : trabajos.map(t => `
+                            <tr>
+                                <td><strong>${t.codigoOrden}</strong></td>
+                                <td>${fmtFechaHora(t.fechaIngreso)}</td>
+                                <td><strong>${t.placa}</strong> · ${t.vehiculo}</td>
+                                <td>${t.descripcionFalla}</td>
+                                <td>S/ ${Number(t.montoActividad || 0).toFixed(2)}</td>
+                                <td><strong style="color:var(--green)">S/ ${Number(t.gananciaActividad || 0).toFixed(2)}</strong></td>
+                            </tr>
+                        `).join("");
+                } else {
+                    document.getElementById("bloqueMecPropio").classList.add("hidden");
+                    document.getElementById("bloqueMecGeneral").classList.remove("hidden");
+                    document.getElementById("tituloHistorialMec").textContent = "🏅 Vista General de Trabajos y Ganancias por Mecánico";
+                    document.getElementById("subtituloHistorialMec").textContent = `Consolidado general de todos los mecánicos (${pct}% de ganancia por actividad realizada).`;
+
+                    historialMecanicosCache = data.mecanicos || [];
+                    document.getElementById("tablaMecGeneralBody").innerHTML = historialMecanicosCache.length === 0
+                        ? `<tr><td colspan="7" style="text-align:center; color:var(--muted);">No hay mecánicos registrados.</td></tr>`
+                        : historialMecanicosCache.map((m, idx) => `
+                            <tr>
+                                <td><strong>${m.nombreCompleto}</strong></td>
+                                <td>${m.email}</td>
+                                <td><strong>${m.trabajosRealizados}</strong></td>
+                                <td>${m.enProceso}</td>
+                                <td>S/ ${Number(m.montoGenerado || 0).toFixed(2)}</td>
+                                <td><strong style="color:var(--green)">S/ ${Number(m.gananciaActividad || 0).toFixed(2)}</strong></td>
+                                <td class="no-print"><button class="btn-sm" onclick="verTrabajosMecanico(${idx})">Ver trabajos</button></td>
+                            </tr>
+                        `).join("");
+                }
+            } catch (e) {
+                notificar("Historial mecánicos: " + e.message, true);
+            }
+        }
+
+        function verTrabajosMecanico(idx) {
+            const m = historialMecanicosCache[idx];
+            if (!m) return;
+            document.getElementById("tituloDetalleMecSel").textContent = `Trabajos Realizados · ${m.nombreCompleto} (${m.trabajosRealizados} realizados · Ganancia: S/ ${Number(m.gananciaActividad || 0).toFixed(2)})`;
+            const trabajos = m.trabajos || [];
+            document.getElementById("tablaDetalleMecSelBody").innerHTML = trabajos.length === 0
+                ? `<tr><td colspan="6" style="text-align:center; color:var(--muted);">Sin trabajos finalizados registrados.</td></tr>`
+                : trabajos.map(t => `
+                    <tr>
+                        <td><strong>${t.codigoOrden}</strong></td>
+                        <td>${fmtFechaHora(t.fechaIngreso)}</td>
+                        <td><strong>${t.placa}</strong> · ${t.vehiculo}</td>
+                        <td>${t.descripcionFalla}</td>
+                        <td>S/ ${Number(t.montoActividad || 0).toFixed(2)}</td>
+                        <td><strong style="color:var(--green)">S/ ${Number(t.gananciaActividad || 0).toFixed(2)}</strong></td>
+                    </tr>
+                `).join("");
+            document.getElementById("panelDetalleMecSeleccionado").classList.remove("hidden");
+        }
+
+        async function cargarCitas() {
+            try {
+                const qs = new URLSearchParams({
+                    rol: user.rol || "",
+                    email: user.email || "",
+                    nombre: user.nombre || ""
+                });
+                const citas = await safeFetchJson(`/api/taller/citas?${qs.toString()}`);
+
+                const puedeGestionarCitas = (user.rol === "ADMIN" || user.rol === "RECEPCIONISTA");
+                document.getElementById("thAccionCita").classList.toggle("hidden", !puedeGestionarCitas);
+
+                document.getElementById("tablaCitasBody").innerHTML = citas.length === 0
+                    ? `<tr><td colspan="${puedeGestionarCitas ? 6 : 5}" style="text-align:center; color:var(--muted);">No hay citas registradas.</td></tr>`
+                    : citas.map(c => {
+                        const accionesHtml = puedeGestionarCitas
+                            ? `<td class="no-print">
+                                <button class="btn-sm" onclick='abrirModalNuevaOrden("COTIZACION", ${JSON.stringify({ cliente: c.clienteNombre, email: c.clienteEmail || "", telefono: c.clienteTelefono || "", placa: c.placaVehiculo || "", falla: c.motivo || "" })})'>🧾 Cotizar</button>
+                                <select class="status-select" onchange="cambiarEstadoCita(${c.idCita}, this.value)">
+                                    <option value="PENDIENTE" ${c.estado === 'PENDIENTE' ? 'selected' : ''}>PENDIENTE</option>
+                                    <option value="CONFIRMADA" ${c.estado === 'CONFIRMADA' ? 'selected' : ''}>CONFIRMADA</option>
+                                    <option value="ATENDIDA" ${c.estado === 'ATENDIDA' ? 'selected' : ''}>ATENDIDA</option>
+                                    <option value="CANCELADA" ${c.estado === 'CANCELADA' ? 'selected' : ''}>CANCELADA</option>
+                                </select>
+                                <button class="btn-danger-sm" onclick="eliminarCita(${c.idCita})">🗑️</button>
+                               </td>`
+                            : "";
+                        return `<tr>
+                            <td><strong>${fmtFechaHora(c.fechaHoraCita)}</strong></td>
+                            <td>${c.clienteNombre}</td>
+                            <td><span class="pill st-EN_REPARACION">${c.placaVehiculo}</span></td>
+                            <td>${c.motivo}</td>
+                            <td><span class="pill st-${c.estado}">${c.estado}</span></td>
+                            ${accionesHtml}
+                        </tr>`;
+                    }).join("");
+            } catch (e) {
+                notificar("Citas: " + e.message, true);
+            }
+        }
+
+        function abrirModalCita() {
+            const sel = document.getElementById("citaRegistroPrevio");
+            const wrapPrevio = document.getElementById("wrapCitaRegistroPrevio");
+            if (user.rol === "CLIENTE") {
+                wrapPrevio.classList.add("hidden");
+            } else {
+                wrapPrevio.classList.remove("hidden");
+                sel.innerHTML = `<option value="">-- Seleccionar vehículo/cliente existente o ingresar manual --</option>` +
+                    vehiculosCache.map((v, idx) =>
+                        `<option value="${idx}">${v.placa} · ${v.marca || ""} ${v.modelo || ""} — ${v.cliente ? v.cliente.nombreCompleto : ""}</option>`
+                    ).join("");
+            }
+
+            document.getElementById("citaAnio").value = "2026";
+            document.getElementById("citaMes").value = "";
+            document.getElementById("citaDia").value = "";
+            document.getElementById("citaHora").value = "";
+            document.getElementById("citaPlaca").value = "";
+            document.getElementById("citaCliente").value = user.rol === "CLIENTE" ? (user.nombre || "") : "";
+            document.getElementById("citaDni").value = "";
+            document.getElementById("citaEmail").value = user.rol === "CLIENTE" ? (user.email || "") : "";
+            document.getElementById("citaTelefono").value = "";
+            document.getElementById("citaMotivo").value = "Diagnóstico computarizado / Scanner";
+            document.getElementById("citaMotivoOtro").value = "";
+            document.getElementById("grupoMotivoOtro").classList.add("hidden");
+            abrirModal("modalCita");
+        }
+
+        function autocompletarCitaDesdeVehiculo() {
+            const idx = document.getElementById("citaRegistroPrevio").value;
+            if (idx === "") return;
+            const v = vehiculosCache[Number(idx)];
+            if (!v) return;
+            document.getElementById("citaPlaca").value = v.placa || "";
+            if (v.cliente) {
+                document.getElementById("citaCliente").value = v.cliente.nombreCompleto || "";
+                document.getElementById("citaDni").value = v.cliente.dniRuc || "";
+                document.getElementById("citaEmail").value = v.cliente.email || "";
+                document.getElementById("citaTelefono").value = v.cliente.telefono || "";
+            }
+        }
+
+        function buscarCoincidenciaEnVivo() {
+            const placaQ = document.getElementById("citaPlaca").value.trim().toLowerCase();
+            const emailQ = document.getElementById("citaEmail").value.trim().toLowerCase();
+            if (!placaQ && !emailQ) return;
+
+            const match = vehiculosCache.find(v =>
+                (placaQ && v.placa && v.placa.toLowerCase() === placaQ) ||
+                (emailQ && v.cliente && v.cliente.email && v.cliente.email.toLowerCase() === emailQ)
+            );
+            if (match && match.cliente) {
+                document.getElementById("citaCliente").value = match.cliente.nombreCompleto || "";
+                document.getElementById("citaDni").value = match.cliente.dniRuc || "";
+                document.getElementById("citaEmail").value = match.cliente.email || "";
+                document.getElementById("citaTelefono").value = match.cliente.telefono || "";
+                if (!placaQ && match.placa) document.getElementById("citaPlaca").value = match.placa;
+            }
+        }
+
+        function toggleMotivoOtro() {
+            const esOtro = document.getElementById("citaMotivo").value === "OTRO";
+            document.getElementById("grupoMotivoOtro").classList.toggle("hidden", !esOtro);
+        }
+
+        async function cambiarEstadoCita(idCita, nuevoEstado) {
+            try {
+                let payload = { estado: nuevoEstado, responsable: user.nombre };
+                if (nuevoEstado === "ATENDIDA" && mecanicosCache.length > 0) {
+                    const opcion = prompt("Ingresa el ID del mecánico para asignar o deja SIN_ASIGNAR para bolsa general:\n" +
+                        mecanicosCache.map(m => `${m.idUsuario}: ${m.nombreCompleto}`).join("\n"), "SIN_ASIGNAR");
+                    if (opcion !== null && opcion.trim() !== "") {
+                        payload.idMecanico = opcion.trim();
+                    }
+                }
+                const data = await safeFetchJson(`/api/taller/citas/${idCita}/estado`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                if (data.ordenGenerada) {
+                    notificar(`Cita #${idCita} atendida. Se generó la orden ${data.ordenGenerada.codigoOrden}.`);
+                    await cargarTodo();
+                } else {
+                    notificar(`Cita #${idCita} cambiada a ${nuevoEstado}.`);
+                    await cargarCitas();
+                }
+            } catch (e) {
+                notificar(e.message, true);
+            }
+        }
+
+        async function eliminarCita(idCita) {
+            if (!confirm("¿Eliminar esta cita de la agenda?")) return;
+            try {
+                await safeFetchJson(`/api/taller/citas/${idCita}?responsable=${encodeURIComponent(user.nombre)}`, { method: "DELETE" });
+                notificar("Cita eliminada.");
+                await cargarCitas();
+            } catch (e) {
+                notificar(e.message, true);
+            }
+        }
+
+        async function eliminarOrden(idOrden, codigo) {
+            if (!confirm(`¿Eliminar la orden ${codigo}? Si tenía repuestos descontados, se devolverán al almacén.`)) return;
+            try {
+                await safeFetchJson(`/api/taller/ordenes/${idOrden}?responsable=${encodeURIComponent(user.nombre)}`, { method: "DELETE" });
+                notificar(`Orden ${codigo} eliminada.`);
+                await cargarTodo();
+            } catch (e) {
+                notificar(e.message, true);
+            }
+        }
+
+        async function confirmarPagoDirecto(idOrden) {
+            try {
+                await safeFetchJson(`/api/taller/ordenes/${idOrden}/confirmar-pago`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ metodoPago: "EFECTIVO", responsable: user.nombre })
+                });
+                notificar("Pago confirmado y registrado en el ciclo de la orden.");
+                await cargarTodo();
+            } catch (e) {
+                notificar(e.message, true);
+            }
+        }
+
+        async function confirmarPagoOrdenActual() {
+            if (!ordenActualObj) return;
+            try {
+                await safeFetchJson(`/api/taller/ordenes/${ordenActualObj.orden.idOrden}/confirmar-pago`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        metodoPago: document.getElementById("selMetodoPago").value,
+                        responsable: user.nombre
+                    })
+                });
+                notificar("Pago confirmado para la orden.");
+                await verDetalle(ordenActualObj.orden.idOrden);
+                await cargarTodo();
+            } catch (e) {
+                notificar(e.message, true);
+            }
+        }
+
+        function renderizarOrdenes(lista) {
+            let filtradas = lista;
+            if (user.rol === "CLIENTE") {
+                filtradas = lista.filter(o => {
+                    const cli = o.vehiculo && o.vehiculo.cliente ? o.vehiculo.cliente : null;
+                    if (!cli) return false;
+                    const matchCorreo = user.email && cli.email && cli.email.trim().toLowerCase() === user.email.trim().toLowerCase();
+                    const matchNombre = user.nombre && cli.nombreCompleto && cli.nombreCompleto.trim().toLowerCase() === user.nombre.trim().toLowerCase();
+                    return matchCorreo || matchNombre;
+                });
+            } else if (user.rol === "MECANICO") {
+                const alcance = document.getElementById("filtroAlcanceOrdenes")?.value || "MIAS";
+                if (alcance === "MIAS") {
+                    filtradas = lista.filter(o => {
+                        const mec = o.mecanicoAsignado;
+                        if (!mec) return false;
+                        const matchEmail = user.email && mec.email && mec.email.trim().toLowerCase() === user.email.trim().toLowerCase();
+                        const matchNombre = user.nombre && mec.nombreCompleto && mec.nombreCompleto.trim().toLowerCase() === user.nombre.trim().toLowerCase();
+                        return matchEmail || matchNombre;
+                    });
+                } else if (alcance === "LIBRES") {
+                    filtradas = lista.filter(o => !o.mecanicoAsignado);
+                }
+            }
+
+            document.getElementById("tablaRecientesBody").innerHTML = filtradas.slice(0, 6).map(o => {
+                const pagado = o.estadoPago === "PAGADO";
+                return `<tr>
+                    <td><strong>${o.codigoOrden}</strong></td>
+                    <td><span class="pill st-EN_REPARACION">${o.vehiculo.placa}</span></td>
+                    <td>${o.vehiculo.cliente.nombreCompleto}</td>
+                    <td>${o.vehiculo.marca} ${o.vehiculo.modelo}</td>
+                    <td><span class="pill st-${o.estado}">${o.estado.replace('_', ' ')}</span></td>
+                    <td><span class="pill ${pagado ? 'st-PAGADO' : 'st-PENDIENTE_PAGO'}">${pagado ? 'PAGADO' : 'PENDIENTE'}</span></td>
+                    <td><strong>S/ ${Number(o.costoEstimado).toFixed(2)}</strong></td>
+                </tr>`;
+            }).join("");
+
+            const puedeEditar = (user.rol === "ADMIN" || user.rol === "MECANICO");
+            const puedeEliminar = (user.rol === "ADMIN" || user.rol === "RECEPCIONISTA");
+
+            document.getElementById("tablaOrdenesFullBody").innerHTML = filtradas.map(o => {
+                const pagado = o.estadoPago === "PAGADO";
+                const mecNombre = o.mecanicoAsignado ? o.mecanicoAsignado.nombreCompleto : "Bolsa general";
+                const mecCelda = ((user.rol === "ADMIN" || user.rol === "RECEPCIONISTA") && mecanicosCache.length > 0)
+                    ? `<select class="status-select no-print" onchange="asignarOrdenManual(${o.idOrden}, this.value)">
+                        <option value="SIN_ASIGNAR" ${!o.mecanicoAsignado ? 'selected' : ''}>-- Bolsa libre --</option>
+                        ${mecanicosCache.map(m => `<option value="${m.idUsuario}" ${o.mecanicoAsignado && o.mecanicoAsignado.idUsuario === m.idUsuario ? 'selected' : ''}>${m.nombreCompleto}</option>`).join("")}
+                       </select><span class="pill st-EN_DIAGNOSTICO" style="margin-left:4px;">${mecNombre}</span>`
+                    : `<span class="pill ${o.mecanicoAsignado ? 'st-EN_DIAGNOSTICO' : 'st-PENDIENTE'}">${mecNombre}</span>`;
+
+                const estCtrl = puedeEditar
+                    ? `<select class="status-select no-print" onchange="cambiarEstado(${o.idOrden}, this.value)">
+                        <option value="PENDIENTE" ${o.estado === 'PENDIENTE' ? 'selected' : ''}>PENDIENTE</option>
+                        <option value="EN_DIAGNOSTICO" ${o.estado === 'EN_DIAGNOSTICO' ? 'selected' : ''}>EN DIAGNÓSTICO</option>
+                        <option value="EN_REPARACION" ${o.estado === 'EN_REPARACION' ? 'selected' : ''}>EN REPARACIÓN</option>
+                        <option value="LISTO" ${o.estado === 'LISTO' ? 'selected' : ''}>LISTO</option>
+                       </select><span class="pill st-${o.estado}" style="margin-left:4px;">${o.estado.replace('_', ' ')}</span>`
+                    : `<span class="pill st-${o.estado}">${o.estado.replace('_', ' ')}</span>`;
+
+                const btnTomar = (user.rol === "MECANICO" && !o.mecanicoAsignado)
+                    ? `<button class="btn-success-sm" onclick="tomarOrdenPropia(${o.idOrden})">🙋 Tomar</button>`
+                    : "";
+                const labelBtn = puedeEditar ? "🔧 Piezas / Boleta" : "🧾 Ver / Pagar";
+                const btnDel = puedeEliminar ? `<button class="btn-danger-sm" onclick="eliminarOrden(${o.idOrden}, '${o.codigoOrden}')">🗑️</button>` : "";
+
+                return `<tr>
+                    <td><strong>${o.codigoOrden}</strong></td>
+                    <td>${fmtFechaHora(o.fechaIngreso)}</td>
+                    <td><strong>${o.vehiculo.placa}</strong><br><small style="color:var(--muted)">${o.vehiculo.marca} ${o.vehiculo.modelo}</small></td>
+                    <td>${o.vehiculo.cliente.nombreCompleto}</td>
+                    <td>${o.descripcionFalla}${o.informacionAdicional ? `<br><small style="color:var(--muted)">Info: ${o.informacionAdicional}</small>` : ''}</td>
+                    <td>${mecCelda}</td>
+                    <td><strong>S/ ${Number(o.costoEstimado).toFixed(2)}</strong></td>
+                    <td>${estCtrl}</td>
+                    <td><span class="pill ${pagado ? 'st-PAGADO' : 'st-PENDIENTE_PAGO'}">${pagado ? 'PAGADO' : 'PENDIENTE'}</span></td>
+                    <td class="no-print">${btnTomar}<button class="btn-sm" onclick="verDetalle(${o.idOrden})">${labelBtn}</button>${btnDel}</td>
+                </tr>`;
+            }).join("");
+        }
+
+        function cambiarTabItem(tipo) {
+            const esRep = (tipo === "REPUESTO");
+            document.getElementById("tabBtnPieza").classList.toggle("active", esRep);
+            document.getElementById("tabBtnServ").classList.toggle("active", !esRep);
+            document.getElementById("formAsignarRep").classList.toggle("hidden", !esRep);
+            document.getElementById("wrapManoObra").classList.toggle("hidden", esRep);
+            if (!esRep) poblarSelectoresServicios();
+        }
+
+        async function verDetalle(id) {
+            try {
+                const data = await safeFetchJson(`/api/taller/ordenes/${id}/detalles`);
+                ordenActualObj = data;
+                const ord = data.orden;
+                document.getElementById("detTitulo").textContent = `${ord.codigoOrden} · ${ord.vehiculo.placa}`;
+                document.getElementById("detSub").textContent = `Cliente: ${ord.vehiculo.cliente.nombreCompleto} | ${ord.vehiculo.marca} ${ord.vehiculo.modelo}`;
+                document.getElementById("detFechaEmision").textContent = `Fecha de ingreso: ${fmtFechaHora(ord.fechaIngreso)} · Emisión: ${fmtFechaHora(new Date())}`;
+                document.getElementById("detInfoAdicional").value = ord.informacionAdicional || "";
+
+                const b = document.getElementById("detBadge");
+                b.textContent = ord.estado.replace('_', ' ');
+                b.className = `pill st-${ord.estado}`;
+
+                const pagado = ord.estadoPago === "PAGADO";
+                const pb = document.getElementById("detPagoBadge");
+                pb.textContent = pagado ? "PAGADO" : "PENDIENTE_PAGO";
+                pb.className = `pill ${pagado ? 'st-PAGADO' : 'st-PENDIENTE_PAGO'}`;
+
+                const boxPago = document.getElementById("boxConfirmarPago");
+                const btnPago = document.getElementById("btnConfirmarPagoModal");
+                const selPago = document.getElementById("selMetodoPago");
+                if (user.rol === "ADMIN" || user.rol === "RECEPCIONISTA" || user.rol === "CLIENTE") {
+                    boxPago.classList.remove("hidden");
+                    if (pagado) {
+                        document.getElementById("detInfoPago").textContent = `Pagado vía ${ord.metodoPago || 'EFECTIVO'} (${fmtFechaHora(ord.fechaPago)})`;
+                        btnPago.classList.add("hidden");
+                        selPago.classList.add("hidden");
+                    } else {
+                        document.getElementById("detInfoPago").textContent = "Selecciona tu método de pago y confirma.";
+                        btnPago.classList.remove("hidden");
+                        selPago.classList.remove("hidden");
+                    }
+                } else {
+                    boxPago.classList.add("hidden");
+                }
+
+                const puedeEditar = (user.rol === "ADMIN" || user.rol === "MECANICO");
+                document.getElementById("boxAsignarRep").classList.toggle("hidden", !puedeEditar);
+                document.getElementById("thQuitar").textContent = puedeEditar ? "Corregir" : "";
+
+                if (data.items.length === 0) {
+                    document.getElementById("detItemsBody").innerHTML = `
+                        <tr><td>Servicio Base / Mano de obra</td><td>SERVICIO</td><td>1</td><td>S/ ${Number(data.subtotal).toFixed(2)}</td><td class="no-print">-</td></tr>`;
+                } else {
+                    document.getElementById("detItemsBody").innerHTML = data.items.map(it => {
+                        const sub = it.subtotal != null ? it.subtotal : (it.precioUnitario * it.cantidad);
+                        const btnDel = puedeEditar
+                            ? `<button class="btn-danger-sm" onclick="quitarDetalle(${ord.idOrden}, ${it.idDetalle})">🗑️ Quitar</button>`
+                            : "";
+                        return `<tr>
+                            <td>${it.descripcion}</td>
+                            <td><span class="pill st-EN_DIAGNOSTICO">${it.tipoDetalle.replace('Detalle', '')}</span></td>
+                            <td>${it.cantidad}</td>
+                            <td><strong>S/ ${Number(sub).toFixed(2)}</strong></td>
+                            <td class="no-print">${btnDel}</td>
+                        </tr>`;
+                    }).join("");
+                }
+
+                document.getElementById("detSubTotal").textContent = `S/ ${Number(data.subtotal).toFixed(2)}`;
+                document.getElementById("detIgv").textContent = `S/ ${Number(data.igv).toFixed(2)}`;
+                document.getElementById("detTotal").textContent = `S/ ${Number(data.total).toFixed(2)}`;
+                abrirModal("modalDetalle");
+            } catch (e) {
+                notificar("Error abriendo orden: " + e.message, true);
+            }
+        }
+
+        document.getElementById("formAsignarRep").onsubmit = async (e) => {
+            e.preventDefault();
+            if (!ordenActualObj) return;
+            try {
+                await safeFetchJson(`/api/taller/ordenes/${ordenActualObj.orden.idOrden}/detalles`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        tipo: "REPUESTO",
+                        idRepuesto: document.getElementById("selRepuesto").value,
+                        cantidad: document.getElementById("inCantRep").value,
+                        responsable: user.nombre
+                    })
+                });
+                notificar("Pieza añadida y stock descontado en SQL Server.");
+                await verDetalle(ordenActualObj.orden.idOrden);
+                await cargarTodo();
+            } catch (err) {
+                notificar(err.message, true);
+            }
+        };
+
+        document.getElementById("formAsignarServ").onsubmit = async (e) => {
+            e.preventDefault();
+            if (!ordenActualObj) return;
+            try {
+                await safeFetchJson(`/api/taller/ordenes/${ordenActualObj.orden.idOrden}/detalles`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        tipo: "SERVICIO",
+                        descripcion: document.getElementById("inServDesc").value,
+                        horas: document.getElementById("inServHoras").value,
+                        precio: document.getElementById("inServPrecio").value,
+                        responsable: user.nombre
+                    })
+                });
+                e.target.reset();
+                notificar("Mano de obra agregada a la orden.");
+                await verDetalle(ordenActualObj.orden.idOrden);
+                await cargarTodo();
+            } catch (err) {
+                notificar(err.message, true);
+            }
+        };
+
+        async function quitarDetalle(idOrden, idDetalle) {
+            if (!confirm("¿Retirar este ítem de la orden? Si es un repuesto, el stock se devolverá automáticamente al almacén.")) return;
+            try {
+                await safeFetchJson(`/api/taller/ordenes/${idOrden}/detalles/${idDetalle}?responsable=${encodeURIComponent(user.nombre)}`, {
+                    method: "DELETE"
+                });
+                notificar("Ítem retirado y stock devuelto al almacén.");
+                await verDetalle(idOrden);
+                await cargarTodo();
+            } catch (err) {
+                notificar(err.message, true);
+            }
+        }
+
+        function abrirAjusteStock(idRepuesto) {
+            const rep = repuestosCache.find(r => r.idRepuesto === idRepuesto);
+            if (!rep) return;
+            document.getElementById("ajusteRepId").value = rep.idRepuesto;
+            document.getElementById("ajusteRepLabel").textContent = `${rep.codigo} · ${rep.nombre} (Stock actual: ${rep.stock} und.)`;
+            document.getElementById("ajusteValor").value = rep.stock;
+            document.getElementById("ajusteMotivo").value = "";
+            abrirModal("modalAjusteStock");
+        }
+
+        document.getElementById("formAjusteStock").onsubmit = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById("ajusteRepId").value;
+            try {
+                await safeFetchJson(`/api/taller/repuestos/${id}/ajustar`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        modo: document.getElementById("ajusteModo").value,
+                        valor: document.getElementById("ajusteValor").value,
+                        motivo: document.getElementById("ajusteMotivo").value,
+                        responsable: user.nombre
+                    })
+                });
+                cerrarModales();
+                notificar("Ajuste manual registrado en Inventario y Kardex.");
+                await cargarTodo();
+            } catch (err) {
+                notificar(err.message, true);
+            }
+        };
+
+        async function cargarKardex() {
+            try {
+                const idRep = document.getElementById("kardexFiltroRep").value;
+                const tipo = document.getElementById("kardexFiltroTipo").value;
+                const params = new URLSearchParams();
+                if (idRep) params.append("idRepuesto", idRep);
+                if (tipo) params.append("tipo", tipo);
+
+                const movs = await safeFetchJson(`/api/taller/inventario/movimientos?${params.toString()}`);
+                document.getElementById("tablaKardexBody").innerHTML = movs.length === 0
+                    ? `<tr><td colspan="9" style="text-align:center; color:var(--muted);">Aún no hay movimientos registrados.</td></tr>`
+                    : movs.map(m => {
+                        const esNeg = m.cantidad < 0;
+                        const colorVar = esNeg ? "var(--red)" : "var(--green)";
+                        const signo = m.cantidad > 0 ? `+${m.cantidad}` : `${m.cantidad}`;
+                        return `<tr>
+                            <td>#${m.idMovimiento}</td>
+                            <td><strong>${m.repuesto.codigo}</strong><br><small style="color:var(--muted)">${m.repuesto.nombre}</small></td>
+                            <td><span class="pill ${m.tipoMovimiento === 'AJUSTE_MANUAL' ? 'st-PENDIENTE' : (esNeg ? 'st-CANCELADA' : 'st-LISTO')}">${m.tipoMovimiento.replace('_', ' ')}</span></td>
+                            <td><strong style="color:${colorVar}">${signo} und.</strong></td>
+                            <td>${m.stockAnterior} → <strong>${m.stockNuevo}</strong></td>
+                            <td>${m.referenciaOrden || '-'}</td>
+                            <td>${m.motivo}</td>
+                            <td><strong>${m.usuarioResponsable}</strong></td>
+                            <td>${fmtFechaHora(m.fechaHora)}</td>
+                        </tr>`;
+                    }).join("");
+            } catch (err) {
+                document.getElementById("tablaKardexBody").innerHTML =
+                    `<tr><td colspan="9" style="color:var(--red);">Error cargando Kardex: ${err.message}</td></tr>`;
+            }
+        }
+
+        async function cargarUsuarios() {
+            if (user.rol !== "ADMIN") return;
+            try {
+                const usuarios = await safeFetchJson("/api/taller/usuarios");
+                document.getElementById("tablaUsuariosBody").innerHTML = usuarios.length === 0
+                    ? `<tr><td colspan="6" style="text-align:center; color:var(--muted);">Sin usuarios registrados.</td></tr>`
+                    : usuarios.map(u => `
+                        <tr>
+                            <td>#${u.idUsuario}</td>
+                            <td><strong>${u.nombreCompleto}</strong></td>
+                            <td>${u.email}</td>
+                            <td><span class="role-chip">${u.rol ? u.rol.nombre : 'N/A'}</span></td>
+                            <td><span class="pill ${u.activo ? 'st-LISTO' : 'st-BLOQUEADO'}">${u.activo ? 'ACTIVO' : 'BLOQUEADO'}</span></td>
+                            <td class="no-print">
+                                <button class="btn-sm" onclick="abrirResetPass(${u.idUsuario}, '${u.email}')">🔑 Cambiar Clave</button>
+                                ${u.email !== user.email ? `<button class="btn-sm" onclick="toggleUsuario(${u.idUsuario})">${u.activo ? '🔒 Bloquear' : '🔓 Activar'}</button>` : '<span style="color:var(--muted); font-size:0.75rem;">(Tu sesión)</span>'}
+                            </td>
+                        </tr>
+                    `).join("");
+            } catch (err) {
+                document.getElementById("tablaUsuariosBody").innerHTML =
+                    `<tr><td colspan="6" style="color:var(--red);">Error cargando usuarios: ${err.message}</td></tr>`;
+            }
+        }
+
+        function formatearFechaISO(date) { return date.toISOString().split("T")[0]; }
+
+        function aplicarIntervaloAuditoria(tipo) {
+            const hoy = new Date();
+            const desdeEl = document.getElementById("audDesde");
+            const hastaEl = document.getElementById("audHasta");
+            if (tipo === "HOY") {
+                desdeEl.value = formatearFechaISO(hoy);
+                hastaEl.value = formatearFechaISO(hoy);
+            } else if (tipo === "7D") {
+                const d = new Date(); d.setDate(hoy.getDate() - 7);
+                desdeEl.value = formatearFechaISO(d); hastaEl.value = formatearFechaISO(hoy);
+            } else if (tipo === "30D") {
+                const d = new Date(); d.setDate(hoy.getDate() - 30);
+                desdeEl.value = formatearFechaISO(d); hastaEl.value = formatearFechaISO(hoy);
+            } else {
+                desdeEl.value = ""; hastaEl.value = "";
+            }
+            cargarAuditoriaFiltrada();
+        }
+
+        async function cargarAuditoriaFiltrada() {
+            if (user.rol !== "ADMIN") return;
+            try {
+                const params = new URLSearchParams();
+                const desde = document.getElementById("audDesde").value;
+                const hasta = document.getElementById("audHasta").value;
+                const modulo = document.getElementById("audModulo").value;
+                if (desde) params.append("desde", desde);
+                if (hasta) params.append("hasta", hasta);
+                if (modulo) params.append("modulo", modulo);
+
+                const logs = await safeFetchJson(`/api/taller/auditoria?${params.toString()}`);
+                document.getElementById("tablaAuditoriaBody").innerHTML = logs.length === 0
+                    ? `<tr><td colspan="5" style="text-align:center; color:var(--muted);">No se encontraron registros en ese intervalo.</td></tr>`
+                    : logs.map(l => `
+                        <tr>
+                            <td>#${l.idLog}</td>
+                            <td><span class="pill st-EN_DIAGNOSTICO">${l.modulo}</span></td>
+                            <td>${l.accion}</td>
+                            <td><strong>${l.usuarioResponsable}</strong></td>
+                            <td>${fmtFechaHora(l.fechaHora)}</td>
+                        </tr>
+                    `).join("");
+            } catch (err) {
+                document.getElementById("tablaAuditoriaBody").innerHTML =
+                    `<tr><td colspan="5" style="color:var(--red);">Error cargando auditoría: ${err.message}</td></tr>`;
+            }
+        }
+
+        async function emitirYArchivar(tipo) {
+            if (!ordenActualObj) return;
+            try {
+                const doc = await safeFetchJson("/api/taller/documentos", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        tipo: tipo,
+                        idOrden: ordenActualObj.orden.idOrden,
+                        cliente: ordenActualObj.orden.vehiculo.cliente.nombreCompleto,
+                        placa: ordenActualObj.orden.vehiculo.placa,
+                        total: ordenActualObj.total,
+                        emisor: user.nombre
+                    })
+                });
+                await cargarTodo();
+                if (tipo === "BOLETA") {
+                    notificar(`Boleta ${doc.numeroDocumento} emitida (${fmtFechaHora(doc.fechaEmision)}). Imprimiendo...`);
+                    document.body.classList.add("printing-modal");
+                    window.print();
+                    document.body.classList.remove("printing-modal");
+                } else {
+                    notificar(`Cotización ${doc.numeroDocumento} archivada (${fmtFechaHora(doc.fechaEmision)}).`);
+                }
+            } catch (err) { notificar(err.message, true); }
+        }
+
+        function imprimirPagina() {
+            document.body.classList.remove("printing-modal");
+            window.print();
+        }
+
+        function abrirResetPass(id, email) {
+            document.getElementById("resetUserId").value = id;
+            document.getElementById("resetUserLabel").textContent = `Cuenta: ${email}`;
+            abrirModal("modalResetPass");
+        }
+
+        document.getElementById("formResetPass").onsubmit = async (e) => {
+            e.preventDefault();
+            try {
+                const data = await safeFetchJson(`/api/taller/usuarios/${document.getElementById("resetUserId").value}/reset-password`, {
+                    method: "PATCH", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ nuevaClave: document.getElementById("inNuevaClave").value })
+                });
+                notificar(data.mensaje);
+                cerrarModales();
+                await cargarTodo();
+            } catch (err) { notificar(err.message, true); }
+        };
+
+        document.getElementById("formMiClave").onsubmit = async (e) => {
+            e.preventDefault();
+            try {
+                const data = await safeFetchJson("/api/taller/mi-clave", {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        email: user.email,
+                        claveActual: document.getElementById("miClaveActual").value,
+                        claveNueva: document.getElementById("miClaveNueva").value
+                    })
+                });
+                e.target.reset();
+                cerrarModales();
+                notificar(data.mensaje);
+            } catch (err) { notificar(err.message, true); }
+        };
+
+        async function toggleUsuario(id) {
+            try {
+                await safeFetchJson(`/api/taller/usuarios/${id}/toggle-estado`, { method: "PATCH" });
+                notificar("Estado de usuario actualizado.");
+                await cargarTodo();
+            } catch (err) { notificar(err.message, true); }
+        }
+
+        async function cambiarEstado(id, estado) {
+            try {
+                await safeFetchJson(`/api/taller/ordenes/${id}/estado`, {
+                    method: "PATCH", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ estado, responsable: user.nombre })
+                });
+                notificar("Estado de orden actualizado.");
+                await cargarTodo();
+            } catch (err) { notificar(err.message, true); }
+        }
+
+        async function reponer(id) {
+            try {
+                await safeFetchJson(`/api/taller/repuestos/${id}/reponer`, {
+                    method: "PATCH", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ cantidad: 5, responsable: user.nombre })
+                });
+                notificar("Se repusieron +5 unidades al almacén.");
+                await cargarTodo();
+            } catch (err) { notificar(err.message, true); }
+        }
+
+        document.getElementById("formNuevaOrden").onsubmit = async (e) => {
+            e.preventDefault();
+            try {
+                const tipoReg = document.getElementById("selTipoRegistroOrden").value;
+                const infoAdic = document.getElementById("inInfoAdicional").value.trim();
+                const creada = await safeFetchJson("/api/taller/ordenes", {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        dni: document.getElementById("inDni").value, cliente: document.getElementById("inCliente").value,
+                        email: document.getElementById("inEmailCli").value, telefono: document.getElementById("inTelefono").value,
+                        placa: document.getElementById("inPlaca").value, marca: document.getElementById("inMarca").value,
+                        modelo: document.getElementById("inModelo").value, falla: document.getElementById("inFalla").value,
+                        informacionAdicional: infoAdic,
+                        costo: document.getElementById("inCosto").value,
+                        idMecanico: document.getElementById("selMecanicoNuevaOrden").value,
+                        responsable: user.nombre
+                    })
+                });
+                if (tipoReg === "COTIZACION") {
+                    await safeFetchJson("/api/taller/documentos", {
+                        method: "POST", headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            tipo: "COTIZACION",
+                            idOrden: creada.idOrden,
+                            cliente: document.getElementById("inCliente").value,
+                            placa: document.getElementById("inPlaca").value.trim().toUpperCase(),
+                            total: Number(document.getElementById("inCosto").value) * 1.18,
+                            emisor: user.nombre
+                        })
+                    });
+                }
+                e.target.reset(); cerrarModales();
+                notificar(tipoReg === "COTIZACION" ? "Cotización registrada y archivada." : "Orden registrada en SQL Server.");
+                await cargarTodo();
+            } catch (err) { notificar(err.message, true); }
+        };
+
+        document.getElementById("formNuevoRep").onsubmit = async (e) => {
+            e.preventDefault();
+            try {
+                await safeFetchJson("/api/taller/repuestos", {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        codigo: document.getElementById("repCod").value, nombre: document.getElementById("repNombre").value,
+                        precioUnitario: document.getElementById("repPrecio").value, stock: document.getElementById("repStock").value,
+                        responsable: user.nombre
+                    })
+                });
+                e.target.reset(); cerrarModales(); notificar("Repuesto creado en almacén."); await cargarTodo();
+            } catch (err) { notificar(err.message, true); }
+        };
+
+        document.getElementById("formNuevoUsuario").onsubmit = async (e) => {
+            e.preventDefault();
+            try {
+                await safeFetchJson("/api/taller/usuarios", {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        nombre: document.getElementById("usrNombre").value,
+                        email: document.getElementById("usrEmail").value,
+                        rol: document.getElementById("usrRol").value,
+                        password: document.getElementById("usrPass").value
+                    })
+                });
+                e.target.reset();
+                document.getElementById("usrPass").value = "123456";
+                cerrarModales(); notificar("Usuario registrado correctamente."); await cargarTodo();
+            } catch (err) { notificar(err.message, true); }
+        };
+
+        document.getElementById("formNuevaCita").onsubmit = async (e) => {
+            e.preventDefault();
+            try {
+                const anio = document.getElementById("citaAnio").value;
+                const mes = document.getElementById("citaMes").value;
+                const diaNum = Number(document.getElementById("citaDia").value);
+                const hora = document.getElementById("citaHora").value;
+                if (!mes || !diaNum || !hora) {
+                    notificar("Completa mes, día y hora de la cita.", true);
+                    return;
+                }
+                const fechaIso = `${anio}-${mes}-${String(diaNum).padStart(2, "0")}T${hora}`;
+
+                const selMotivo = document.getElementById("citaMotivo").value;
+                const motivoFinal = selMotivo === "OTRO"
+                    ? (document.getElementById("citaMotivoOtro").value.trim() || "Atención general de taller")
+                    : selMotivo;
+
+                await safeFetchJson("/api/taller/citas", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        fechaHora: fechaIso,
+                        placa: document.getElementById("citaPlaca").value.trim().toUpperCase(),
+                        cliente: document.getElementById("citaCliente").value.trim(),
+                        dni: document.getElementById("citaDni").value.trim(),
+                        email: document.getElementById("citaEmail").value.trim(),
+                        telefono: document.getElementById("citaTelefono").value.trim(),
+                        motivo: motivoFinal,
+                        responsable: user.nombre
+                    })
+                });
+                e.target.reset();
+                cerrarModales();
+                notificar("Cita agendada en SQL Server.");
+                await cargarCitas();
+            } catch (err) {
+                notificar(err.message, true);
+            }
+        };
+
+        document.getElementById("globalSearch").addEventListener("input", (e) => {
+            const q = e.target.value.toLowerCase();
+            const res = ordenesCache.filter(o =>
+                o.codigoOrden.toLowerCase().includes(q) ||
+                o.vehiculo.placa.toLowerCase().includes(q) ||
+                o.vehiculo.cliente.nombreCompleto.toLowerCase().includes(q)
+            );
+            renderizarOrdenes(res);
+            if (q.length > 0) irAVista("viewOrdenes");
+        });
+
+        function abrirModal(id) { document.getElementById(id).classList.add("open"); }
+        function cerrarModales() { document.querySelectorAll(".modal-backdrop").forEach(m => m.classList.remove("open")); }
+        document.getElementById("logoutBtn").onclick = () => { localStorage.clear(); sessionStorage.clear(); window.location.href = "index.html"; };
+
+        cargarTodo();
+    </script>
+</body>
+</html>
